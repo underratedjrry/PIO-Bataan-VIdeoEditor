@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SidebarNav } from "./SidebarNav";
 import { ClockAndWeather } from "./ClockAndWeather";
 import { Footer } from "./Footer";
+import { LogOutIcon } from "./icons";
 
 export function DashboardShell({
   navItems,
@@ -68,19 +69,21 @@ export function DashboardShell({
           <div className="flex-1 p-3" onClick={() => setOpen(false)}>
             <SidebarNav items={navItems} />
           </div>
-          <div className="border-t border-slate-200 p-3 text-sm dark:border-slate-800">
-            <p className="text-slate-500 dark:text-slate-400">
+          <div className="flex items-center justify-between border-t border-slate-200 p-3 text-sm dark:border-slate-800">
+            <p className="min-w-0 truncate text-slate-500 dark:text-slate-400">
               {fullName}
               <span className="block text-xs uppercase text-slate-400 dark:text-slate-500">
                 {role}
               </span>
             </p>
-            <form action={logoutAction} className="mt-2">
+            <form action={logoutAction}>
               <button
                 type="submit"
-                className="text-xs font-medium text-slate-600 underline hover:text-[#1565D8] dark:text-slate-400"
+                aria-label="Sign out"
+                title="Sign out"
+                className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
               >
-                Sign out
+                <LogOutIcon className="h-4 w-4" />
               </button>
             </form>
           </div>

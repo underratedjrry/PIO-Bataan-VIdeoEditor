@@ -8,6 +8,7 @@ import {
   CHECK_STATUS_LABELS,
 } from "@/lib/tasks/constants";
 import { runWithToast } from "@/lib/toast-action";
+import { CheckIcon, PlusIcon, XIcon } from "@/components/icons";
 import type { Writer } from "@/types/database";
 
 export function AddTaskCheckForm({
@@ -25,9 +26,11 @@ export function AddTaskCheckForm({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-fit rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 dark:border-slate-700 dark:text-slate-300"
+        aria-label="Add check"
+        title="Add check"
+        className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
       >
-        Add check
+        <PlusIcon className="h-4 w-4" />
       </button>
     );
   }
@@ -85,16 +88,20 @@ export function AddTaskCheckForm({
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          aria-label="Submit check"
+          title={isPending ? "Saving..." : "Submit check"}
+          className="rounded-md bg-[#1565D8] p-2 text-white hover:bg-[#0F52B5] disabled:opacity-60"
         >
-          {isPending ? "Saving..." : "Submit check"}
+          <CheckIcon className="h-4 w-4" />
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-300"
+          aria-label="Cancel"
+          title="Cancel"
+          className="rounded-md border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
         >
-          Cancel
+          <XIcon className="h-4 w-4" />
         </button>
       </div>
     </form>

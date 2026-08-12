@@ -5,6 +5,7 @@ import { Modal } from "@/components/Modal";
 import { RoleSelect } from "@/components/RoleSelect";
 import { runWithToast } from "@/lib/toast-action";
 import { deleteUserAccount, updateUserName } from "@/lib/admin/actions";
+import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "@/components/icons";
 import type { Profile } from "@/types/database";
 
 export function UserModal({
@@ -40,6 +41,8 @@ export function UserModal({
               <button
                 type="button"
                 disabled={isPending}
+                aria-label="Save"
+                title="Save"
                 onClick={() =>
                   startTransition(async () => {
                     const ok = await runWithToast(
@@ -49,19 +52,21 @@ export function UserModal({
                     if (ok) setEditingName(false);
                   })
                 }
-                className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
+                className="rounded-md bg-[#1565D8] p-2 text-white hover:bg-[#0F52B5] disabled:opacity-60"
               >
-                Save
+                <CheckIcon className="h-4 w-4" />
               </button>
               <button
                 type="button"
+                aria-label="Cancel"
+                title="Cancel"
                 onClick={() => {
                   setName(user.full_name);
                   setEditingName(false);
                 }}
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700"
+                className="rounded-md border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
               >
-                Cancel
+                <XIcon className="h-4 w-4" />
               </button>
             </div>
           ) : (
@@ -70,9 +75,11 @@ export function UserModal({
               <button
                 type="button"
                 onClick={() => setEditingName(true)}
-                className="text-xs font-medium text-[#1565D8]"
+                aria-label="Edit name"
+                title="Edit"
+                className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
               >
-                Edit
+                <PencilIcon className="h-4 w-4" />
               </button>
             </div>
           )}
@@ -102,7 +109,8 @@ export function UserModal({
         <button
           type="button"
           disabled={isPending || isSelf}
-          title={isSelf ? "You can't delete your own account" : undefined}
+          aria-label="Delete account"
+          title={isSelf ? "You can't delete your own account" : "Delete account"}
           onClick={() => {
             if (confirm(`Delete ${user.full_name}'s account? This can't be undone.`)) {
               startTransition(async () => {
@@ -111,9 +119,9 @@ export function UserModal({
               });
             }
           }}
-          className="rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-600 disabled:opacity-40 dark:border-red-900 dark:text-red-400"
+          className="rounded-md border border-red-300 p-2 text-red-600 disabled:opacity-40 dark:border-red-900 dark:text-red-400"
         >
-          Delete account
+          <TrashIcon className="h-4 w-4" />
         </button>
       </div>
     </Modal>

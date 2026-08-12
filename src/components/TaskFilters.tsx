@@ -10,6 +10,7 @@ import {
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
 import { PAGE_SIZE_OPTIONS } from "@/lib/tasks/query";
+import { ArrowUpDownIcon, DownloadIcon } from "./icons";
 import type { OutputType } from "@/types/database";
 
 const SORT_OPTIONS = [
@@ -87,15 +88,19 @@ export function TaskFilters({ outputTypes }: { outputTypes: OutputType[] }) {
       <button
         type="button"
         onClick={toggleDir}
-        className="h-9 rounded-md border border-slate-300 px-3 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-300"
+        aria-label={dir === "asc" ? "Ascending" : "Descending"}
+        title={dir === "asc" ? "Ascending" : "Descending"}
+        className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
       >
-        {dir === "asc" ? "Ascending" : "Descending"}
+        <ArrowUpDownIcon className={`h-4 w-4 ${dir === "desc" ? "rotate-180" : ""}`} />
       </button>
       <a
         href={exportHref}
-        className="flex h-9 items-center rounded-md bg-[#1565D8] px-3 text-sm font-medium text-white hover:bg-[#0F52B5]"
+        aria-label="Export CSV"
+        title="Export CSV"
+        className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5]"
       >
-        Export CSV
+        <DownloadIcon className="h-4 w-4" />
       </a>
     </div>
   );

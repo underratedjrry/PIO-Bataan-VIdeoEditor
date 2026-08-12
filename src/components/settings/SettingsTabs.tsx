@@ -17,6 +17,7 @@ import {
   toggleOutputType,
   toggleWriter,
 } from "@/lib/lookups/actions";
+import { PlusIcon } from "@/components/icons";
 
 const TABS = [
   { key: "users", label: "Users" },
@@ -157,9 +158,11 @@ function LookupSection({
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          aria-label={`Add ${itemLabel}`}
+          title="Add"
+          className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5] disabled:opacity-60"
         >
-          Add
+          <PlusIcon className="h-4 w-4" />
         </button>
       </form>
 

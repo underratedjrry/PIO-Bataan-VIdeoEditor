@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { createUserAccount } from "@/lib/admin/actions";
 import { runWithToast } from "@/lib/toast-action";
 import { PasswordField } from "@/components/PasswordField";
+import { CheckIcon, PlusIcon, XIcon } from "@/components/icons";
 import type { Role } from "@/types/database";
 
 const ROLES: Role[] = ["admin", "editor", "viewer"];
@@ -17,9 +18,11 @@ export function AddUserForm() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-fit rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
+        aria-label="Add user"
+        title="Add user"
+        className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5]"
       >
-        Add User
+        <PlusIcon className="h-4 w-4" />
       </button>
     );
   }
@@ -65,16 +68,20 @@ export function AddUserForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          aria-label="Create user"
+          title={isPending ? "Creating..." : "Create user"}
+          className="rounded-md bg-[#1565D8] p-2 text-white hover:bg-[#0F52B5] disabled:opacity-60"
         >
-          {isPending ? "Creating..." : "Create user"}
+          <CheckIcon className="h-4 w-4" />
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700"
+          aria-label="Cancel"
+          title="Cancel"
+          className="rounded-md border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
         >
-          Cancel
+          <XIcon className="h-4 w-4" />
         </button>
       </div>
     </form>

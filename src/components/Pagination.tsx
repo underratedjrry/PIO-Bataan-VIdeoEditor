@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 export function Pagination({
   page,
@@ -37,9 +38,11 @@ export function Pagination({
           type="button"
           disabled={page <= 1}
           onClick={() => goToPage(page - 1)}
-          className="rounded-md border border-slate-300 px-3 py-1.5 disabled:opacity-40 dark:border-slate-700"
+          aria-label="Previous page"
+          title="Previous"
+          className="rounded-md border border-slate-300 p-1.5 disabled:opacity-40 dark:border-slate-700"
         >
-          Previous
+          <ChevronLeftIcon className="h-4 w-4" />
         </button>
         <span>
           Page {page} of {totalPages}
@@ -48,9 +51,11 @@ export function Pagination({
           type="button"
           disabled={page >= totalPages}
           onClick={() => goToPage(page + 1)}
-          className="rounded-md border border-slate-300 px-3 py-1.5 disabled:opacity-40 dark:border-slate-700"
+          aria-label="Next page"
+          title="Next"
+          className="rounded-md border border-slate-300 p-1.5 disabled:opacity-40 dark:border-slate-700"
         >
-          Next
+          <ChevronRightIcon className="h-4 w-4" />
         </button>
       </div>
     </div>

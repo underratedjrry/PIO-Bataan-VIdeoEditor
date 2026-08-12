@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { SendIcon } from "@/components/icons";
 import type { ChatMessage } from "@/lib/ai-assist";
 
 export function AiAssistChat() {
@@ -79,9 +80,11 @@ export function AiAssistChat() {
         <button
           type="submit"
           disabled={isPending || !input.trim()}
-          className="rounded-md bg-[#1565D8] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          aria-label="Send"
+          title="Send"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5] disabled:opacity-60"
         >
-          Send
+          <SendIcon className="h-4 w-4" />
         </button>
       </form>
     </div>

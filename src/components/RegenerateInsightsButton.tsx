@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { RefreshIcon } from "./icons";
 
 export function RegenerateInsightsButton() {
   const router = useRouter();
@@ -12,6 +13,8 @@ export function RegenerateInsightsButton() {
     <button
       type="button"
       disabled={isPending}
+      aria-label="Regenerate insights"
+      title={isPending ? "Analyzing..." : "Regenerate insights"}
       onClick={() => {
         startTransition(async () => {
           const res = await fetch("/api/insights/generate", { method: "POST" });
@@ -24,9 +27,9 @@ export function RegenerateInsightsButton() {
           }
         });
       }}
-      className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300"
+      className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300"
     >
-      {isPending ? "Analyzing..." : "Regenerate insights"}
+      <RefreshIcon className={`h-4 w-4 ${isPending ? "animate-spin" : ""}`} />
     </button>
   );
 }

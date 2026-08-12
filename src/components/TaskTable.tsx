@@ -131,7 +131,7 @@ export function TaskTable({
                         <PencilIcon className="h-4 w-4" />
                       </Link>
                     )}
-                    {canDelete && <DeleteTaskButton onDelete={boundDelete} icon />}
+                    {canDelete && <DeleteTaskButton onDelete={boundDelete} />}
                   </div>
                 </td>
               </tr>

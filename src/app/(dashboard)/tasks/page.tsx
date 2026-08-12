@@ -5,6 +5,7 @@ import { fetchFilteredTasks, fetchLatestChecksByTaskId, parseTaskFilters } from 
 import { TaskFilters } from "@/components/TaskFilters";
 import { TaskTable } from "@/components/TaskTable";
 import { Pagination } from "@/components/Pagination";
+import { PlusIcon } from "@/components/icons";
 import type { OutputType, Profile } from "@/types/database";
 
 export default async function TasksPage({
@@ -42,9 +43,11 @@ export default async function TasksPage({
         {canCreate && (
           <Link
             href="/tasks/new"
-            className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
+            aria-label="New task"
+            title="New task"
+            className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5]"
           >
-            New Task
+            <PlusIcon className="h-4 w-4" />
           </Link>
         )}
       </div>

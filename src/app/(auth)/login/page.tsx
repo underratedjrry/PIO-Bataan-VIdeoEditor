@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { login } from "../actions";
 import { PasswordField } from "@/components/PasswordField";
+import { ArrowRightIcon } from "@/components/icons";
 
 export default async function LoginPage({
   searchParams,
@@ -45,9 +46,10 @@ export default async function LoginPage({
 
         <button
           type="submit"
-          className="mt-2 rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
+          className="mt-2 flex items-center justify-center gap-2 rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
         >
           Sign in
+          <ArrowRightIcon className="h-4 w-4" />
         </button>
       </form>
 

@@ -13,6 +13,7 @@ import {
 } from "@/lib/tasks/constants";
 import { taskFormSchema, type TaskFormValues } from "@/lib/tasks/schema";
 import { runWithToast } from "@/lib/toast-action";
+import { CheckIcon } from "@/components/icons";
 import type { OutputType, Profile, Task, Writer } from "@/types/database";
 
 function toDatetimeLocal(value: string | null | undefined) {
@@ -166,9 +167,11 @@ export function TaskForm({
       <button
         type="submit"
         disabled={isPending}
-        className="mt-2 w-fit rounded-md bg-[#1565D8] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
+        aria-label={submitLabel}
+        title={isPending ? "Saving..." : submitLabel}
+        className="mt-2 flex h-10 w-10 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5] disabled:opacity-60"
       >
-        {isPending ? "Saving..." : submitLabel}
+        <CheckIcon className="h-5 w-5" />
       </button>
     </form>
   );
