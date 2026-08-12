@@ -61,6 +61,7 @@ export async function GET(request: NextRequest) {
   for (const task of dueSoon) {
     if (alreadySent.has(`${task.id}:due_soon`)) continue;
     const recipientId = task.assigned_to ?? task.created_by;
+    if (!recipientId) continue;
     const list = dueSoonByRecipient.get(recipientId) ?? [];
     list.push(task);
     dueSoonByRecipient.set(recipientId, list);
@@ -70,6 +71,7 @@ export async function GET(request: NextRequest) {
   for (const task of overdue) {
     if (alreadySent.has(`${task.id}:overdue`)) continue;
     const recipientId = task.assigned_to ?? task.created_by;
+    if (!recipientId) continue;
     const list = overdueByRecipient.get(recipientId) ?? [];
     list.push(task);
     overdueByRecipient.set(recipientId, list);

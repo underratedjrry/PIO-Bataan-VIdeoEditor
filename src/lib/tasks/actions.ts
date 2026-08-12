@@ -130,7 +130,7 @@ export async function updateTask(taskId: string, formData: FormData) {
 
   const notifyIds = new Set<string>();
   if (updated.assigned_to && updated.assigned_to !== user.id) notifyIds.add(updated.assigned_to);
-  if (updated.created_by !== user.id) notifyIds.add(updated.created_by);
+  if (updated.created_by && updated.created_by !== user.id) notifyIds.add(updated.created_by);
 
   if (existing.assigned_to !== updated.assigned_to && updated.assigned_to) {
     const { data: assignee } = await supabase

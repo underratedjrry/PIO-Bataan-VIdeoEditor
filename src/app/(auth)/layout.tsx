@@ -9,12 +9,15 @@ export default function AuthLayout({
     <div className="flex flex-1 items-center justify-center bg-white px-4 dark:bg-slate-900">
       <div className="w-full max-w-sm overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="brand-accent-strip" />
-        <div className="p-8">
-          <Image src="/logo.png" alt="PIO Bataan" width={220} height={83} priority className="mb-4" />
+        <div className="flex flex-col items-center p-8 text-center">
+          <Image src="/logo-icon.png" alt="" width={106} height={106} priority className="mb-3" />
+          <h1 className="mb-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
+            PIO Bataan - VE PMIS
+          </h1>
           <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
             Track editing tasks, due dates, and performance.
           </p>
-          {children}
+          <div className="w-full text-left">{children}</div>
         </div>
       </div>
     </div>

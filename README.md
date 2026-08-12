@@ -1,8 +1,9 @@
-# Video Editing PMIS
+# PIO Bataan - VE PMIS
 
 Project management for video editing tasks: create/track tasks by segment,
-priority, and due date; email notifications; CSV export; AI-generated
-performance insights; and Admin/Editor/Viewer roles.
+output type, priority, and due date; email notifications; CSV export;
+data-driven performance insights; editorial approval workflow (Checked By);
+and Admin/Editor/Viewer roles.
 
 ## Stack
 
@@ -10,17 +11,16 @@ performance insights; and Admin/Editor/Viewer roles.
 - Supabase (Postgres, Auth, Row-Level Security)
 - Resend (email notifications)
 - Vercel Cron (daily due/overdue digest)
-- Anthropic Claude API (performance insights)
 
 ## 1. Create the Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the SQL Editor, run `supabase/migrations/0001_init.sql`, then
-   `supabase/migrations/0002_editorial_workflow.sql` (in that order). Together
-   these create all tables, RLS policies, seed data (default Output Types),
-   and a trigger that auto-provisions a `profiles` row on signup - **the
-   first user to sign up becomes `admin`**, everyone after that defaults to
-   `editor`.
+2. In the SQL Editor, run these migrations **in order**:
+   `supabase/migrations/0001_init.sql`, then `0002_editorial_workflow.sql`,
+   then `0003_user_management.sql`. Together these create all tables, RLS
+   policies, seed data (default Output Types), and a trigger that
+   auto-provisions a `profiles` row on signup - **the first user to sign up
+   becomes `admin`**, everyone after that defaults to `editor`.
 3. In **Authentication -> Providers -> Email**, disable "Confirm email" for
    the simplest local/demo flow (or leave it on and users will be prompted
    to confirm before their first sign-in).
@@ -35,13 +35,10 @@ performance insights; and Admin/Editor/Viewer roles.
    account email).
 3. On Vercel, Resend is also available as a native Marketplace integration
    if you'd rather provision it from the Vercel dashboard.
+4. Email is optional - if you skip `RESEND_API_KEY`, the app still works,
+   it just logs a warning instead of sending.
 
-## 3. Get an Anthropic API key
-
-Create a key at [console.anthropic.com](https://console.anthropic.com) -
-this powers the "Regenerate insights" narrative on the Insights page.
-
-## 4. Configure environment variables
+## 3. Configure environment variables
 
 Copy `.env.example` to `.env.local` and fill in every value:
 
@@ -51,7 +48,7 @@ cp .env.example .env.local
 
 `CRON_SECRET` can be anything random, e.g. `openssl rand -hex 32`.
 
-## 5. Run locally
+## 4. Run locally
 
 ```bash
 npm install
@@ -61,7 +58,7 @@ npm run dev
 Visit [http://localhost:3000](http://localhost:3000), sign up (first
 account becomes admin), and start creating tasks.
 
-## 6. Deploy to Vercel
+## 5. Deploy to Vercel
 
 1. Push this repo to GitHub and import it in Vercel.
 2. Add all the variables from `.env.example` as Vercel Environment
@@ -77,34 +74,43 @@ account becomes admin), and start creating tasks.
 
 ## Roles
 
-- **admin** - full access to all tasks, plus `/admin/users` to promote or
-  demote other users.
-- **editor** - can create tasks, and edit/delete tasks they created or are
-  assigned to.
+- **admin** - full access to all tasks, plus `/settings` to manage user
+  roles/accounts, Output Types, and Writers.
+- **editor** - can create tasks, edit/delete tasks they created or are
+  assigned to, and log "Checked By" entries.
 - **viewer** - read-only access to all tasks, CSV export, and their own
   insights page.
 
-Enforced both via Postgres Row-Level Security (`supabase/migrations/0001_init.sql`,
-`0002_editorial_workflow.sql`) and hidden/disabled in the UI for the current role.
+Enforced both via Postgres Row-Level Security (`supabase/migrations/`)
+and hidden/disabled in the UI for the current role.
+
+## Settings (`/settings`, admin-only)
+
+- **Users** - edit a user's display name, change their role, or delete
+  their account outright (revokes their Supabase Auth login; tasks they
+  created or were assigned keep existing, just with no creator/assignee).
+- **Output Types** and **Writers** - admin-managed lookup lists with full
+  create/rename/deactivate/delete. Active entries show up in the task
+  form's dropdowns; deleting one just clears the reference on any tasks
+  that used it (no data loss).
 
 ## Editorial workflow
 
-- **Output Type** and **Writer** are admin-managed lookup lists
-  (`/admin/output-types`, `/admin/writers`) - add or deactivate entries there;
-  active ones show up in the task form's dropdowns.
-- **Checked By** on a task's detail page is an append-only approval log
-  (Draft Checking / Revision Checking / Final Approval, each with a status
-  of For Revision / Approved / Disapproved and optional remarks). Admins and
-  editors can add entries; nothing can be edited or deleted once logged.
+**Checked By** on a task's detail page is an append-only approval log
+(Draft Checking / Revision Checking / Final Approval, each with a status of
+For Revision / Approved / Disapproved and optional remarks). Admins and
+editors can add entries; nothing can be edited or deleted once logged.
 
 ## Notes
 
 - Sort/filter state lives in the URL (`?priority=&segment=&status=&sort=&dir=`),
   so filtered views are shareable/bookmarkable, and CSV export re-applies the
   same filters as whatever's currently on screen.
-- The Insights page shows AI analysis for the **signed-in user's own**
-  assigned tasks (completion rate, overdue count, turnaround time, and a
-  breakdown by segment/priority/status), cached in `insights_cache` and
-  refreshed on demand via the "Regenerate insights" button.
+- The Insights page computes each signed-in user's own performance
+  (completion rate, overdue count, turnaround time, breakdown by
+  segment/priority/status) and writes a plain-language analysis with a
+  deterministic rules engine (`src/lib/tasks/narrative.ts`) - no external AI
+  call, no API key required. Cached in `insights_cache`, refreshed on demand
+  via "Regenerate insights".
 - The daily cron dedupes against `notification_log` so re-runs within the
   same ~20 hours won't re-send the same due/overdue email for a task.

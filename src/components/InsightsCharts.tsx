@@ -1,7 +1,7 @@
 "use client";
 
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { PerformanceStats } from "@/lib/anthropic";
+import type { PerformanceStats } from "@/lib/tasks/narrative";
 import { CATEGORICAL, CHROME, SEQUENTIAL_BLUE, STATUS_COLORS } from "@/lib/palette";
 import { useColorScheme } from "@/lib/useColorScheme";
 import {

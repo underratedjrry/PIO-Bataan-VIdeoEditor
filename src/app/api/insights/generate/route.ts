@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { computePerformanceStats } from "@/lib/tasks/stats";
-import { generatePerformanceNarrative } from "@/lib/anthropic";
+import { generateAlgorithmicNarrative } from "@/lib/tasks/narrative";
 
 export async function POST() {
   const supabase = await createClient();
@@ -24,7 +24,7 @@ export async function POST() {
   }
 
   const stats = await computePerformanceStats(supabase, user.id);
-  const narrative = await generatePerformanceNarrative(profile.full_name, stats);
+  const narrative = generateAlgorithmicNarrative(profile.full_name, stats);
 
   const { data: cached, error } = await supabase
     .from("insights_cache")

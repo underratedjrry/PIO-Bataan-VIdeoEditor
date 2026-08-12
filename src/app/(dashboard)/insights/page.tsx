@@ -1,7 +1,7 @@
 import { getCurrentProfile } from "@/lib/supabase/profile";
 import { createClient } from "@/lib/supabase/server";
 import { computePerformanceStats } from "@/lib/tasks/stats";
-import { generatePerformanceNarrative, type PerformanceStats } from "@/lib/anthropic";
+import { generateAlgorithmicNarrative, type PerformanceStats } from "@/lib/tasks/narrative";
 import { InsightsCharts } from "@/components/InsightsCharts";
 import { RegenerateInsightsButton } from "@/components/RegenerateInsightsButton";
 
@@ -28,7 +28,7 @@ export default async function InsightsPage() {
 
   if (!cached) {
     const stats = await computePerformanceStats(supabase, user.id);
-    const narrative = await generatePerformanceNarrative(profile.full_name, stats);
+    const narrative = generateAlgorithmicNarrative(profile.full_name, stats);
     const { data: inserted } = await supabase
       .from("insights_cache")
       .upsert({
@@ -64,7 +64,7 @@ export default async function InsightsPage() {
 
       <div className="max-w-2xl rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
         <h2 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
-          AI Analysis
+          Performance Analysis
         </h2>
         <p className="whitespace-pre-line">{cached?.narrative ?? "No analysis yet."}</p>
       </div>

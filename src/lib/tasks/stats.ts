@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Task } from "@/types/database";
-import type { PerformanceStats } from "@/lib/anthropic";
+import type { PerformanceStats } from "./narrative";
 
 export async function computePerformanceStats(
   supabase: SupabaseClient<Database>,

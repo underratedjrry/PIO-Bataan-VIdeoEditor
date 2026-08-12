@@ -43,7 +43,7 @@ export type Task = {
   status: Status;
   due_date: string | null;
   assigned_to: string | null;
-  created_by: string;
+  created_by: string | null;
   output_type_id: string | null;
   writer_id: string | null;
   created_at: string;

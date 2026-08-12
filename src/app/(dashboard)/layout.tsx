@@ -15,8 +15,11 @@ export default async function DashboardLayout({
       <header>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-3">
           <div className="flex items-center gap-6">
-            <Link href="/tasks" className="flex items-center">
-              <Image src="/logo.png" alt="PIO Bataan" width={140} height={53} priority />
+            <Link href="/tasks" className="flex items-center gap-2">
+              <Image src="/logo-icon.png" alt="" width={40} height={40} priority />
+              <span className="font-semibold text-slate-900 dark:text-slate-50">
+                PIO Bataan - VE PMIS
+              </span>
             </Link>
             <nav className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
               <Link href="/tasks" className="hover:text-[#1565D8]">
@@ -26,17 +29,9 @@ export default async function DashboardLayout({
                 Insights
               </Link>
               {profile.role === "admin" && (
-                <>
-                  <Link href="/admin/users" className="hover:text-[#1565D8]">
-                    Users
-                  </Link>
-                  <Link href="/admin/output-types" className="hover:text-[#1565D8]">
-                    Output Types
-                  </Link>
-                  <Link href="/admin/writers" className="hover:text-[#1565D8]">
-                    Writers
-                  </Link>
-                </>
+                <Link href="/settings" className="hover:text-[#1565D8]">
+                  Settings
+                </Link>
               )}
             </nav>
           </div>
