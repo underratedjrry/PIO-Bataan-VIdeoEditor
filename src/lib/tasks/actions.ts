@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { sendTaskAssignedEmail, sendTaskUpdatedEmail } from "@/lib/resend";
 import type { Status, Task } from "@/types/database";
-import { PRIORITY_LABELS, STATUS_LABELS } from "./constants";
-import { taskFormSchema } from "./schema";
+import { CHECK_STAGE_LABELS, CHECK_STATUS_LABELS, PRIORITY_LABELS, STATUS_LABELS } from "./constants";
+import { taskCheckFormSchema, taskFormSchema } from "./schema";
 
 async function requireUser() {
   const supabase = await createClient();
@@ -26,6 +26,8 @@ function parseTaskForm(formData: FormData) {
     status: String(formData.get("status") ?? "todo"),
     due_date: String(formData.get("due_date") ?? ""),
     assigned_to: String(formData.get("assigned_to") ?? ""),
+    output_type_id: String(formData.get("output_type_id") ?? ""),
+    writer_id: String(formData.get("writer_id") ?? ""),
   });
 }
 
@@ -43,6 +45,8 @@ export async function createTask(formData: FormData) {
       status: values.status,
       due_date: values.due_date ? new Date(values.due_date).toISOString() : null,
       assigned_to: values.assigned_to || null,
+      output_type_id: values.output_type_id || null,
+      writer_id: values.writer_id || null,
       created_by: user.id,
     })
     .select()
@@ -95,6 +99,8 @@ export async function updateTask(taskId: string, formData: FormData) {
       status: values.status,
       due_date: values.due_date ? new Date(values.due_date).toISOString() : null,
       assigned_to: values.assigned_to || null,
+      output_type_id: values.output_type_id || null,
+      writer_id: values.writer_id || null,
     })
     .eq("id", taskId)
     .select()
@@ -178,5 +184,43 @@ export async function setTaskStatus(taskId: string, status: Status) {
   });
 
   revalidatePath("/tasks");
+  revalidatePath(`/tasks/${taskId}`);
+}
+
+export async function addTaskCheck(taskId: string, formData: FormData) {
+  const { supabase, user } = await requireUser();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || (profile.role !== "admin" && profile.role !== "editor")) {
+    throw new Error("Only admins and editors can log a check");
+  }
+
+  const values = taskCheckFormSchema.parse({
+    stage: String(formData.get("stage") ?? "draft_checking"),
+    status: String(formData.get("status") ?? "for_revision"),
+    remarks: String(formData.get("remarks") ?? ""),
+  });
+
+  const { error } = await supabase.from("task_checks").insert({
+    task_id: taskId,
+    checked_by: user.id,
+    stage: values.stage,
+    status: values.status,
+    remarks: values.remarks || null,
+  });
+
+  if (error) throw new Error(error.message);
+
+  await supabase.from("task_activity").insert({
+    task_id: taskId,
+    actor_id: user.id,
+    change_summary: `${CHECK_STAGE_LABELS[values.stage]}: ${CHECK_STATUS_LABELS[values.status]}`,
+  });
+
   revalidatePath(`/tasks/${taskId}`);
 }

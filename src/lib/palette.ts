@@ -30,19 +30,22 @@ export const STATUS_COLORS = {
   critical: { light: "#d03b3b", dark: "#d03b3b" },
 };
 
+// Re-grounded to the app's slate neutral scale (see globals.css) so charts
+// match the surrounding white / dark-gray theme instead of the skill's
+// default warm-gray chrome.
 export const CHROME = {
   light: {
-    surface: "#fcfcfb",
-    primaryInk: "#0b0b0b",
-    secondaryInk: "#52514e",
-    muted: "#898781",
-    grid: "#e1e0d9",
+    surface: "#ffffff",
+    primaryInk: "#0f172a",
+    secondaryInk: "#475569",
+    muted: "#64748b",
+    grid: "#e2e8f0",
   },
   dark: {
-    surface: "#1a1a19",
-    primaryInk: "#ffffff",
-    secondaryInk: "#c3c2b7",
-    muted: "#898781",
-    grid: "#2c2c2a",
+    surface: "#1e293b",
+    primaryInk: "#f8fafc",
+    secondaryInk: "#cbd5e1",
+    muted: "#94a3b8",
+    grid: "#334155",
   },
 };

@@ -12,7 +12,7 @@ import {
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
 import { taskFormSchema, type TaskFormValues } from "@/lib/tasks/schema";
-import type { Profile, Task } from "@/types/database";
+import type { OutputType, Profile, Task, Writer } from "@/types/database";
 
 function toDatetimeLocal(value: string | null | undefined) {
   if (!value) return "";
@@ -24,11 +24,15 @@ function toDatetimeLocal(value: string | null | undefined) {
 export function TaskForm({
   task,
   profiles,
+  outputTypes,
+  writers,
   onSubmit,
   submitLabel,
 }: {
   task?: Task;
   profiles: Profile[];
+  outputTypes: OutputType[];
+  writers: Writer[];
   onSubmit: (formData: FormData) => Promise<void>;
   submitLabel: string;
 }) {
@@ -47,6 +51,8 @@ export function TaskForm({
       status: task?.status ?? "todo",
       due_date: toDatetimeLocal(task?.due_date),
       assigned_to: task?.assigned_to ?? "",
+      output_type_id: task?.output_type_id ?? "",
+      writer_id: task?.writer_id ?? "",
     },
   });
 
@@ -59,6 +65,8 @@ export function TaskForm({
     formData.set("status", values.status);
     formData.set("due_date", values.due_date ?? "");
     formData.set("assigned_to", values.assigned_to ?? "");
+    formData.set("output_type_id", values.output_type_id ?? "");
+    formData.set("writer_id", values.writer_id ?? "");
     startTransition(() => {
       onSubmit(formData);
     });
@@ -80,6 +88,17 @@ export function TaskForm({
             {SEGMENTS.map((s) => (
               <option key={s} value={s}>
                 {SEGMENT_LABELS[s]}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <Field label="Output Type" error={errors.output_type_id?.message}>
+          <select {...register("output_type_id")} className="form-input">
+            <option value="">None</option>
+            {outputTypes.map((ot) => (
+              <option key={ot.id} value={ot.id}>
+                {ot.name}
               </option>
             ))}
           </select>
@@ -108,6 +127,17 @@ export function TaskForm({
         <Field label="Due date" error={errors.due_date?.message}>
           <input type="datetime-local" {...register("due_date")} className="form-input" />
         </Field>
+
+        <Field label="Writer" error={errors.writer_id?.message}>
+          <select {...register("writer_id")} className="form-input">
+            <option value="">None</option>
+            {writers.map((w) => (
+              <option key={w.id} value={w.id}>
+                {w.name}
+              </option>
+            ))}
+          </select>
+        </Field>
       </div>
 
       <Field label="Assignee" error={errors.assigned_to?.message}>
@@ -124,7 +154,7 @@ export function TaskForm({
       <button
         type="submit"
         disabled={isPending}
-        className="mt-2 w-fit rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900"
+        className="mt-2 w-fit rounded-md bg-[#1565D8] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
       >
         {isPending ? "Saving..." : submitLabel}
       </button>
@@ -143,7 +173,7 @@ function Field({
 }) {
   return (
     <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium text-zinc-700 dark:text-zinc-300">{label}</span>
+      <span className="font-medium text-slate-700 dark:text-slate-300">{label}</span>
       {children}
       {error && <span className="text-xs text-red-600 dark:text-red-400">{error}</span>}
     </label>

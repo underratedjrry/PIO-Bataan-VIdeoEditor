@@ -9,6 +9,7 @@ export interface TaskFilters {
   segment?: string;
   status?: string;
   assignedTo?: string;
+  outputTypeId?: string;
   sort: string;
   dir: "asc" | "desc";
 }
@@ -24,6 +25,7 @@ export function parseTaskFilters(searchParams: SearchParamsRecord): TaskFilters 
     segment: get("segment") || undefined,
     status: get("status") || undefined,
     assignedTo: get("assignedTo") || undefined,
+    outputTypeId: get("outputTypeId") || undefined,
     sort: get("sort") || "due_date",
     dir: get("dir") === "desc" ? "desc" : "asc",
   };
@@ -35,6 +37,7 @@ export function filtersToSearchParams(filters: TaskFilters): URLSearchParams {
   if (filters.segment) params.set("segment", filters.segment);
   if (filters.status) params.set("status", filters.status);
   if (filters.assignedTo) params.set("assignedTo", filters.assignedTo);
+  if (filters.outputTypeId) params.set("outputTypeId", filters.outputTypeId);
   params.set("sort", filters.sort);
   params.set("dir", filters.dir);
   return params;
@@ -52,6 +55,7 @@ export async function fetchFilteredTasks(
   if (filters.segment) query = query.eq("segment", filters.segment as Segment);
   if (filters.status) query = query.eq("status", filters.status as Status);
   if (filters.assignedTo) query = query.eq("assigned_to", filters.assignedTo);
+  if (filters.outputTypeId) query = query.eq("output_type_id", filters.outputTypeId);
 
   // priority is a text enum (not alphabetically meaningful), so sort it client-side.
   if (filters.sort !== "priority") {
@@ -73,4 +77,29 @@ export async function fetchFilteredTasks(
   }
 
   return tasks;
+}
+
+// Returns a map of taskId -> most recent task_checks row, for quick "latest
+// review status" display in the task list.
+export async function fetchLatestChecksByTaskId(
+  supabase: SupabaseClient<Database>,
+  taskIds: string[],
+) {
+  if (taskIds.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from("task_checks")
+    .select("*")
+    .in("task_id", taskIds)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  const latestByTaskId: Record<string, NonNullable<typeof data>[number]> = {};
+  for (const check of data ?? []) {
+    if (!latestByTaskId[check.task_id]) {
+      latestByTaskId[check.task_id] = check;
+    }
+  }
+  return latestByTaskId;
 }

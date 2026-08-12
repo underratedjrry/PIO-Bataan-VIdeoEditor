@@ -15,10 +15,12 @@ performance insights; and Admin/Editor/Viewer roles.
 ## 1. Create the Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the SQL Editor, run `supabase/migrations/0001_init.sql`. This creates
-   all tables, RLS policies, and a trigger that auto-provisions a `profiles`
-   row on signup - **the first user to sign up becomes `admin`**, everyone
-   after that defaults to `editor`.
+2. In the SQL Editor, run `supabase/migrations/0001_init.sql`, then
+   `supabase/migrations/0002_editorial_workflow.sql` (in that order). Together
+   these create all tables, RLS policies, seed data (default Output Types),
+   and a trigger that auto-provisions a `profiles` row on signup - **the
+   first user to sign up becomes `admin`**, everyone after that defaults to
+   `editor`.
 3. In **Authentication -> Providers -> Email**, disable "Confirm email" for
    the simplest local/demo flow (or leave it on and users will be prompted
    to confirm before their first sign-in).
@@ -82,8 +84,18 @@ account becomes admin), and start creating tasks.
 - **viewer** - read-only access to all tasks, CSV export, and their own
   insights page.
 
-Enforced both via Postgres Row-Level Security (`supabase/migrations/0001_init.sql`)
-and hidden/disabled in the UI for the current role.
+Enforced both via Postgres Row-Level Security (`supabase/migrations/0001_init.sql`,
+`0002_editorial_workflow.sql`) and hidden/disabled in the UI for the current role.
+
+## Editorial workflow
+
+- **Output Type** and **Writer** are admin-managed lookup lists
+  (`/admin/output-types`, `/admin/writers`) - add or deactivate entries there;
+  active ones show up in the task form's dropdowns.
+- **Checked By** on a task's detail page is an append-only approval log
+  (Draft Checking / Revision Checking / Final Approval, each with a status
+  of For Revision / Approved / Disapproved and optional remarks). Admins and
+  editors can add entries; nothing can be edited or deleted once logged.
 
 ## Notes
 

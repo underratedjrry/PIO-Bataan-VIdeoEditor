@@ -12,7 +12,7 @@ export default async function LoginPage({
     <div>
       <form action={login} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <label htmlFor="email" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Email
           </label>
           <input
@@ -20,11 +20,11 @@ export default async function LoginPage({
             name="email"
             type="email"
             required
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="password" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Password
           </label>
           <input
@@ -32,7 +32,7 @@ export default async function LoginPage({
             name="password"
             type="password"
             required
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
         </div>
 
@@ -49,15 +49,15 @@ export default async function LoginPage({
 
         <button
           type="submit"
-          className="mt-2 rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-2 rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
         >
           Sign in
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         No account?{" "}
-        <Link href="/signup" className="font-medium text-zinc-900 underline dark:text-zinc-50">
+        <Link href="/signup" className="font-medium text-[#1565D8] underline dark:text-[#5B9BEA]">
           Sign up
         </Link>
       </p>

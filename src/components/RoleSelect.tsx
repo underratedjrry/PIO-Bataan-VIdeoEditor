@@ -27,7 +27,7 @@ export function RoleSelect({
           updateUserRole(userId, next);
         });
       }}
-      className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs text-zinc-900 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+      className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
     >
       {ROLES.map((r) => (
         <option key={r} value={r}>

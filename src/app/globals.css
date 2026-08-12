@@ -14,8 +14,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Dark gray (Tailwind slate-900), not near-black. */
+    --background: #0f172a;
+    --foreground: #f1f5f9;
   }
 }
 
@@ -26,7 +27,29 @@ body {
 }
 
 @layer components {
+  /* Bolder, official-portal input treatment: a visible 2px border (not a
+     hairline) with a brand-blue focus ring, in the spirit of the reference
+     government portal's boxed form controls - but in our own palette. */
   .form-input {
-    @apply rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100;
+    @apply rounded-md border-2 border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100;
+  }
+  .form-input:focus {
+    @apply border-[#1565D8] ring-2 ring-[#1565D8]/25;
+  }
+
+  /* Four-color strip echoing the logo's pinwheel mark, under the header. */
+  .brand-accent-strip {
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      #1565d8 0%,
+      #1565d8 25%,
+      #5ab031 25%,
+      #5ab031 50%,
+      #f0791f 50%,
+      #f0791f 75%,
+      #29abe2 75%,
+      #29abe2 100%
+    );
   }
 }

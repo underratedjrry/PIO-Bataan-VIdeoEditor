@@ -33,8 +33,8 @@ function StatTile({
   const color = tone ? STATUS_COLORS[tone][scheme] : CHROME[scheme].primaryInk;
 
   return (
-    <div className="rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-800">
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
+    <div className="rounded-lg border border-slate-200 px-4 py-3 dark:border-slate-800">
+      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
       <p className="text-2xl font-semibold" style={{ color }}>
         {value}
       </p>
@@ -55,7 +55,7 @@ function HorizontalBarChart({
 
   if (rows.length === 0) {
     return (
-      <p className="py-6 text-sm text-zinc-500 dark:text-zinc-400">No data yet.</p>
+      <p className="py-6 text-sm text-slate-500 dark:text-slate-400">No data yet.</p>
     );
   }
 
@@ -121,7 +121,7 @@ export function InsightsCharts({ stats }: { stats: PerformanceStats }) {
       </div>
 
       <div>
-        <h3 className="mb-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+        <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
           Tasks by segment
         </h3>
         <HorizontalBarChart
@@ -132,7 +132,7 @@ export function InsightsCharts({ stats }: { stats: PerformanceStats }) {
 
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
         <div>
-          <h3 className="mb-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+          <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
             Tasks by priority
           </h3>
           <HorizontalBarChart
@@ -146,7 +146,7 @@ export function InsightsCharts({ stats }: { stats: PerformanceStats }) {
           />
         </div>
         <div>
-          <h3 className="mb-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+          <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
             Tasks by status
           </h3>
           <HorizontalBarChart

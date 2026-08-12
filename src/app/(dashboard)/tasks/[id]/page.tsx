@@ -1,17 +1,21 @@
 import { notFound } from "next/navigation";
 import { getCurrentProfile } from "@/lib/supabase/profile";
 import { createClient } from "@/lib/supabase/server";
-import { deleteTask, updateTask } from "@/lib/tasks/actions";
+import { addTaskCheck, deleteTask, updateTask } from "@/lib/tasks/actions";
 import { TaskForm } from "@/components/TaskForm";
 import { DeleteTaskButton } from "@/components/DeleteTaskButton";
+import { AddTaskCheckForm } from "@/components/AddTaskCheckForm";
 import { Badge } from "@/components/Badge";
 import {
+  CHECK_STAGE_LABELS,
+  CHECK_STATUS_BADGE_CLASSES,
+  CHECK_STATUS_LABELS,
   PRIORITY_BADGE_CLASSES,
   PRIORITY_LABELS,
   SEGMENT_LABELS,
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
-import type { Profile, Task } from "@/types/database";
+import type { OutputType, Profile, Task, Writer } from "@/types/database";
 
 export default async function TaskDetailPage({
   params,
@@ -22,11 +26,25 @@ export default async function TaskDetailPage({
   const { profile } = await getCurrentProfile();
   const supabase = await createClient();
 
-  const [{ data: task }, { data: profiles }, { data: activity }] = await Promise.all([
+  const [
+    { data: task },
+    { data: profiles },
+    { data: activity },
+    { data: outputTypes },
+    { data: writers },
+    { data: checks },
+  ] = await Promise.all([
     supabase.from("tasks").select("*").eq("id", id).maybeSingle(),
     supabase.from("profiles").select("*"),
     supabase
       .from("task_activity")
+      .select("*")
+      .eq("task_id", id)
+      .order("created_at", { ascending: false }),
+    supabase.from("output_types").select("*").order("name"),
+    supabase.from("writers").select("*").order("name"),
+    supabase
+      .from("task_checks")
       .select("*")
       .eq("task_id", id)
       .order("created_at", { ascending: false }),
@@ -37,6 +55,10 @@ export default async function TaskDetailPage({
   const profilesById = Object.fromEntries(
     (profiles ?? []).map((p) => [p.id, p as Profile]),
   );
+  const outputTypesById = Object.fromEntries(
+    (outputTypes ?? []).map((ot) => [ot.id, ot as OutputType]),
+  );
+  const writersById = Object.fromEntries((writers ?? []).map((w) => [w.id, w as Writer]));
 
   const canEdit =
     profile.role === "admin" ||
@@ -45,14 +67,16 @@ export default async function TaskDetailPage({
   const canDelete =
     profile.role === "admin" ||
     (profile.role === "editor" && task.created_by === profile.id);
+  const canCheck = profile.role === "admin" || profile.role === "editor";
 
   const boundUpdate = updateTask.bind(null, task.id);
   const boundDelete = deleteTask.bind(null, task.id);
+  const boundAddCheck = addTaskCheck.bind(null, task.id);
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{task.title}</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{task.title}</h1>
         {canDelete && <DeleteTaskButton onDelete={boundDelete} />}
       </div>
 
@@ -60,6 +84,8 @@ export default async function TaskDetailPage({
         <TaskForm
           task={task}
           profiles={profiles ?? []}
+          outputTypes={outputTypes ?? []}
+          writers={writers ?? []}
           onSubmit={boundUpdate}
           submitLabel="Save changes"
         />
@@ -67,30 +93,70 @@ export default async function TaskDetailPage({
         <ReadOnlyTaskDetails
           task={task}
           assignee={task.assigned_to ? profilesById[task.assigned_to] : undefined}
+          outputType={task.output_type_id ? outputTypesById[task.output_type_id] : undefined}
+          writer={task.writer_id ? writersById[task.writer_id] : undefined}
         />
       )}
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">Activity</h2>
+        <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-50">
+          Checked By
+        </h2>
+        <ul className="mb-3 flex flex-col gap-3 text-sm">
+          {(checks ?? []).map((check) => (
+            <li
+              key={check.id}
+              className="rounded-lg border border-slate-200 p-3 dark:border-slate-800"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-slate-900 dark:text-slate-100">
+                    {profilesById[check.checked_by]?.full_name ?? "Someone"}
+                  </span>
+                  <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    {CHECK_STAGE_LABELS[check.stage]}
+                  </Badge>
+                  <Badge className={CHECK_STATUS_BADGE_CLASSES[check.status]}>
+                    {CHECK_STATUS_LABELS[check.status]}
+                  </Badge>
+                </div>
+                <span className="text-xs text-slate-400">
+                  {new Date(check.created_at).toLocaleString()}
+                </span>
+              </div>
+              {check.remarks && (
+                <p className="mt-2 text-slate-600 dark:text-slate-400">{check.remarks}</p>
+              )}
+            </li>
+          ))}
+          {(checks ?? []).length === 0 && (
+            <li className="text-slate-400">No checks logged yet.</li>
+          )}
+        </ul>
+        {canCheck && <AddTaskCheckForm onAdd={boundAddCheck} />}
+      </div>
+
+      <div>
+        <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-50">Activity</h2>
         <ul className="flex flex-col gap-2 text-sm">
           {(activity ?? []).map((entry) => (
             <li
               key={entry.id}
-              className="flex justify-between border-b border-zinc-100 pb-2 text-zinc-600 dark:border-zinc-800 dark:text-zinc-400"
+              className="flex justify-between border-b border-slate-100 pb-2 text-slate-600 dark:border-slate-800 dark:text-slate-400"
             >
               <span>
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                <span className="font-medium text-slate-900 dark:text-slate-100">
                   {profilesById[entry.actor_id]?.full_name ?? "Someone"}
                 </span>{" "}
                 {entry.change_summary}
               </span>
-              <span className="text-xs text-zinc-400">
+              <span className="text-xs text-slate-400">
                 {new Date(entry.created_at).toLocaleString()}
               </span>
             </li>
           ))}
           {(activity ?? []).length === 0 && (
-            <li className="text-zinc-400">No activity yet.</li>
+            <li className="text-slate-400">No activity yet.</li>
           )}
         </ul>
       </div>
@@ -98,29 +164,45 @@ export default async function TaskDetailPage({
   );
 }
 
-function ReadOnlyTaskDetails({ task, assignee }: { task: Task; assignee?: Profile }) {
+function ReadOnlyTaskDetails({
+  task,
+  assignee,
+  outputType,
+  writer,
+}: {
+  task: Task;
+  assignee?: Profile;
+  outputType?: OutputType;
+  writer?: Writer;
+}) {
   return (
     <div className="flex max-w-xl flex-col gap-3 text-sm">
       {task.description && (
-        <p className="text-zinc-700 dark:text-zinc-300">{task.description}</p>
+        <p className="text-slate-700 dark:text-slate-300">{task.description}</p>
       )}
       <div className="flex flex-wrap gap-2">
         <Badge className={PRIORITY_BADGE_CLASSES[task.priority]}>
           {PRIORITY_LABELS[task.priority]}
         </Badge>
-        <Badge className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+        <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
           {SEGMENT_LABELS[task.segment]}
         </Badge>
-        <Badge className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+        <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
           {STATUS_LABELS[task.status]}
         </Badge>
+        {outputType && (
+          <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            {outputType.name}
+          </Badge>
+        )}
       </div>
-      <p className="text-zinc-500 dark:text-zinc-400">
+      <p className="text-slate-500 dark:text-slate-400">
         Due: {task.due_date ? new Date(task.due_date).toLocaleString() : "No due date"}
       </p>
-      <p className="text-zinc-500 dark:text-zinc-400">
+      <p className="text-slate-500 dark:text-slate-400">
         Assignee: {assignee?.full_name ?? "Unassigned"}
       </p>
+      <p className="text-slate-500 dark:text-slate-400">Writer: {writer?.name ?? "Unassigned"}</p>
     </div>
   );
 }

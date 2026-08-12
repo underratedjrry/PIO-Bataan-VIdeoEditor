@@ -48,11 +48,11 @@ export default async function InsightsPage() {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">
             Performance Insights
           </h1>
           {cached && (
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Last analyzed {new Date(cached.generated_at).toLocaleString()}
             </p>
           )}
@@ -62,8 +62,8 @@ export default async function InsightsPage() {
 
       <InsightsCharts stats={stats} />
 
-      <div className="max-w-2xl rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-        <h2 className="mb-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="max-w-2xl rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+        <h2 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
           AI Analysis
         </h2>
         <p className="whitespace-pre-line">{cached?.narrative ?? "No analysis yet."}</p>

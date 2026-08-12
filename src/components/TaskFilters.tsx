@@ -9,6 +9,7 @@ import {
   STATUSES,
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
+import type { OutputType } from "@/types/database";
 
 const SORT_OPTIONS = [
   { value: "due_date", label: "Due Date" },
@@ -17,7 +18,7 @@ const SORT_OPTIONS = [
   { value: "title", label: "Title" },
 ];
 
-export function TaskFilters() {
+export function TaskFilters({ outputTypes }: { outputTypes: OutputType[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -53,6 +54,15 @@ export function TaskFilters() {
         options={[{ value: "", label: "All" }, ...SEGMENTS.map((s) => ({ value: s, label: SEGMENT_LABELS[s] }))]}
       />
       <FilterSelect
+        label="Output Type"
+        value={searchParams.get("outputTypeId") ?? ""}
+        onChange={(v) => update("outputTypeId", v)}
+        options={[
+          { value: "", label: "All" },
+          ...outputTypes.map((ot) => ({ value: ot.id, label: ot.name })),
+        ]}
+      />
+      <FilterSelect
         label="Status"
         value={searchParams.get("status") ?? ""}
         onChange={(v) => update("status", v)}
@@ -67,13 +77,13 @@ export function TaskFilters() {
       <button
         type="button"
         onClick={toggleDir}
-        className="h-9 rounded-md border border-zinc-300 px-3 text-sm text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+        className="h-9 rounded-md border border-slate-300 px-3 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-300"
       >
         {dir === "asc" ? "Ascending" : "Descending"}
       </button>
       <a
         href={exportHref}
-        className="flex h-9 items-center rounded-md bg-zinc-900 px-3 text-sm font-medium text-white dark:bg-zinc-50 dark:text-zinc-900"
+        className="flex h-9 items-center rounded-md bg-[#1565D8] px-3 text-sm font-medium text-white hover:bg-[#0F52B5]"
       >
         Export CSV
       </a>
@@ -93,12 +103,12 @@ function FilterSelect({
   options: { value: string; label: string }[];
 }) {
   return (
-    <label className="flex flex-col gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+    <label className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
       {label}
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 rounded-md border border-zinc-300 bg-white px-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+        className="h-9 rounded-md border border-slate-300 bg-white px-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

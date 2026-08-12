@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getCurrentProfile } from "@/lib/supabase/profile";
 import { logout } from "../(auth)/actions";
@@ -10,47 +11,53 @@ export default async function DashboardLayout({
   const { profile } = await getCurrentProfile();
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <header className="border-b border-zinc-200 dark:border-zinc-800">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+    <div className="flex min-h-full flex-1 flex-col bg-white dark:bg-slate-900">
+      <header>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-3">
           <div className="flex items-center gap-6">
-            <Link href="/tasks" className="font-semibold text-zinc-900 dark:text-zinc-50">
-              Video Editing PMIS
+            <Link href="/tasks" className="flex items-center">
+              <Image src="/logo.png" alt="PIO Bataan" width={140} height={53} priority />
             </Link>
-            <nav className="flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
-              <Link href="/tasks" className="hover:text-zinc-900 dark:hover:text-zinc-50">
+            <nav className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+              <Link href="/tasks" className="hover:text-[#1565D8]">
                 Tasks
               </Link>
-              <Link href="/insights" className="hover:text-zinc-900 dark:hover:text-zinc-50">
+              <Link href="/insights" className="hover:text-[#1565D8]">
                 Insights
               </Link>
               {profile.role === "admin" && (
-                <Link
-                  href="/admin/users"
-                  className="hover:text-zinc-900 dark:hover:text-zinc-50"
-                >
-                  Users
-                </Link>
+                <>
+                  <Link href="/admin/users" className="hover:text-[#1565D8]">
+                    Users
+                  </Link>
+                  <Link href="/admin/output-types" className="hover:text-[#1565D8]">
+                    Output Types
+                  </Link>
+                  <Link href="/admin/writers" className="hover:text-[#1565D8]">
+                    Writers
+                  </Link>
+                </>
               )}
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm">
-            <span className="text-zinc-500 dark:text-zinc-400">
+            <span className="text-slate-500 dark:text-slate-400">
               {profile.full_name}{" "}
-              <span className="text-xs uppercase text-zinc-400 dark:text-zinc-500">
+              <span className="text-xs uppercase text-slate-400 dark:text-slate-500">
                 ({profile.role})
               </span>
             </span>
             <form action={logout}>
               <button
                 type="submit"
-                className="text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                className="text-slate-600 underline hover:text-[#1565D8] dark:text-slate-400"
               >
                 Sign out
               </button>
             </form>
           </div>
         </div>
+        <div className="brand-accent-strip" />
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">{children}</main>
     </div>

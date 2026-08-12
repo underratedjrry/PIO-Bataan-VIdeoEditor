@@ -17,6 +17,10 @@ export type Status = "todo" | "in_progress" | "in_review" | "done" | "blocked";
 
 export type NotificationType = "due_soon" | "overdue" | "assigned" | "updated";
 
+export type CheckStage = "draft_checking" | "revision_checking" | "final_approval";
+
+export type CheckStatus = "for_revision" | "approved" | "disapproved";
+
 // Note: these are plain `type` aliases, not `interface`s. Interfaces don't
 // get TypeScript's implicit index-signature leniency, so they fail the
 // `Record<string, unknown>` structural check that @supabase/postgrest-js's
@@ -40,8 +44,34 @@ export type Task = {
   due_date: string | null;
   assigned_to: string | null;
   created_by: string;
+  output_type_id: string | null;
+  writer_id: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type OutputType = {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type Writer = {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type TaskCheck = {
+  id: string;
+  task_id: string;
+  checked_by: string;
+  stage: CheckStage;
+  status: CheckStatus;
+  remarks: string | null;
+  created_at: string;
 };
 
 export type TaskActivity = {
@@ -104,6 +134,29 @@ export type Database = {
         Row: InsightsCache;
         Insert: InsightsCache;
         Update: Partial<InsightsCache>;
+        Relationships: [];
+      };
+      output_types: {
+        Row: OutputType;
+        Insert: Partial<OutputType> & { name: string };
+        Update: Partial<OutputType>;
+        Relationships: [];
+      };
+      writers: {
+        Row: Writer;
+        Insert: Partial<Writer> & { name: string };
+        Update: Partial<Writer>;
+        Relationships: [];
+      };
+      task_checks: {
+        Row: TaskCheck;
+        Insert: Partial<TaskCheck> & {
+          task_id: string;
+          checked_by: string;
+          stage: CheckStage;
+          status: CheckStatus;
+        };
+        Update: Partial<TaskCheck>;
         Relationships: [];
       };
     };
