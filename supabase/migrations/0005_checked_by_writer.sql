@@ -7,6 +7,11 @@
 -- dropping that column otherwise (2BP01 dependency error).
 drop policy task_checks_insert_admin_or_editor on public.task_checks;
 
+-- Existing rows (if any, from testing) have no writer to backfill to -
+-- there's no meaningful mapping from the old profiles-based checked_by to
+-- a writer, so clear them before adding the new NOT NULL column.
+delete from public.task_checks;
+
 alter table public.task_checks
   drop constraint task_checks_checked_by_fkey,
   drop column checked_by,
