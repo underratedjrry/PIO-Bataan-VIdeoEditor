@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // AppleDouble shadow files (this project lives on an exFAT volume).
+    "**/._*",
   ]),
 ]);
 
