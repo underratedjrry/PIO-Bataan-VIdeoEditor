@@ -16,11 +16,12 @@ and Admin/Editor/Viewer roles.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. In the SQL Editor, run these migrations **in order**:
-   `supabase/migrations/0001_init.sql`, then `0002_editorial_workflow.sql`,
-   then `0003_user_management.sql`. Together these create all tables, RLS
-   policies, seed data (default Output Types), and a trigger that
-   auto-provisions a `profiles` row on signup - **the first user to sign up
-   becomes `admin`**, everyone after that defaults to `editor`.
+   `supabase/migrations/0001_init.sql`, `0002_editorial_workflow.sql`,
+   `0003_user_management.sql`, then `0004_output_link.sql`. Together these
+   create all tables, RLS policies, seed data (default Output Types), and a
+   trigger that auto-provisions a `profiles` row on signup - **the first
+   user to sign up becomes `admin`**, everyone after that defaults to
+   `editor`.
 3. In **Authentication -> Providers -> Email**, disable "Confirm email" for
    the simplest local/demo flow (or leave it on and users will be prompted
    to confirm before their first sign-in).
@@ -103,9 +104,15 @@ editors can add entries; nothing can be edited or deleted once logged.
 
 ## Notes
 
-- Sort/filter state lives in the URL (`?priority=&segment=&status=&sort=&dir=`),
-  so filtered views are shareable/bookmarkable, and CSV export re-applies the
-  same filters as whatever's currently on screen.
+- Sort/filter/pagination state lives in the URL
+  (`?priority=&segment=&status=&outputTypeId=&sort=&dir=&page=&pageSize=`),
+  so a given view is shareable/bookmarkable; CSV export re-applies the same
+  filters as whatever's on screen (across all pages, not just the current one).
+- Clicking a task in the list opens it in a modal (view/edit/delete, plus
+  Checked By) via a Next.js intercepting route - the same URL
+  (`/tasks/[id]`) also works as a normal full page on direct load/refresh.
+- Tasks can carry an **Output Link** (a pasted URL to the finished
+  deliverable), shown on the task detail view/CSV export.
 - The Insights page computes each signed-in user's own performance
   (completion rate, overdue count, turnaround time, breakdown by
   segment/priority/status) and writes a plain-language analysis with a
