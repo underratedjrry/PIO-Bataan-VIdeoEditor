@@ -1,6 +1,3 @@
-import type { Segment } from "@/types/database";
-import { SEGMENT_LABELS } from "./constants";
-
 // `type`, not `interface` - interfaces don't get the implicit index-signature
 // leniency needed to satisfy `Record<string, unknown>` when this is stored
 // as `insights_cache.summary` (see the note in src/types/database.ts).
@@ -70,10 +67,9 @@ export function generateAlgorithmicNarrative(userName: string, stats: Performanc
 
   const topSegment = topEntry(stats.bySegment);
   if (topSegment && stats.totalTasks >= 4) {
-    const [segmentKey, count] = topSegment;
+    const [label, count] = topSegment;
     const share = count / stats.totalTasks;
     if (share >= 0.5) {
-      const label = SEGMENT_LABELS[segmentKey as Segment] ?? segmentKey;
       observations.push(
         `Over half of your tasks (${count} of ${stats.totalTasks}) are in ${label} - your workload is fairly concentrated in one stage.`,
       );

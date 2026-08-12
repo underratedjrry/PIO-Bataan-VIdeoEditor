@@ -9,11 +9,13 @@ export default async function NewTaskPage() {
   if (profile.role === "viewer") redirect("/tasks");
 
   const supabase = await createClient();
-  const [{ data: profiles }, { data: outputTypes }, { data: writers }] = await Promise.all([
-    supabase.from("profiles").select("*"),
-    supabase.from("output_types").select("*").order("name"),
-    supabase.from("writers").select("*").order("name"),
-  ]);
+  const [{ data: profiles }, { data: outputTypes }, { data: writers }, { data: segments }] =
+    await Promise.all([
+      supabase.from("profiles").select("*"),
+      supabase.from("output_types").select("*").order("name"),
+      supabase.from("writers").select("*").order("name"),
+      supabase.from("segments").select("*").order("name"),
+    ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -22,6 +24,7 @@ export default async function NewTaskPage() {
         profiles={profiles ?? []}
         outputTypes={outputTypes ?? []}
         writers={writers ?? []}
+        segments={segments ?? []}
         onSubmit={createTask}
         submitLabel="Create Task"
       />

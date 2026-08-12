@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { fetchFilteredTasks, fetchLatestChecksByTaskId, parseTaskFilters } from "@/lib/tasks/query";
-import {
-  CHECK_STATUS_LABELS,
-  PRIORITY_LABELS,
-  SEGMENT_LABELS,
-  STATUS_LABELS,
-} from "@/lib/tasks/constants";
+import { CHECK_STATUS_LABELS, PRIORITY_LABELS, STATUS_LABELS } from "@/lib/tasks/constants";
 import { toCsv } from "@/lib/csv";
-import type { OutputType, Profile, Writer } from "@/types/database";
+import type { OutputType, Profile, Segment, Writer } from "@/types/database";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -23,12 +18,13 @@ export async function GET(request: NextRequest) {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams.entries());
   const filters = parseTaskFilters(searchParams);
 
-  const [{ tasks }, { data: profiles }, { data: outputTypes }, { data: writers }] =
+  const [{ tasks }, { data: profiles }, { data: outputTypes }, { data: writers }, { data: segments }] =
     await Promise.all([
       fetchFilteredTasks(supabase, filters, { paginate: false }),
       supabase.from("profiles").select("*"),
       supabase.from("output_types").select("*"),
       supabase.from("writers").select("*"),
+      supabase.from("segments").select("*"),
     ]);
   const latestCheckByTaskId = await fetchLatestChecksByTaskId(
     supabase,
@@ -42,11 +38,12 @@ export async function GET(request: NextRequest) {
     (outputTypes ?? []).map((ot) => [ot.id, ot as OutputType]),
   );
   const writersById = Object.fromEntries((writers ?? []).map((w) => [w.id, w as Writer]));
+  const segmentsById = Object.fromEntries((segments ?? []).map((s) => [s.id, s as Segment]));
 
   const rows = tasks.map((task) => ({
     title: task.title,
     description: task.description ?? "",
-    segment: SEGMENT_LABELS[task.segment],
+    segment: task.segment_id ? (segmentsById[task.segment_id]?.name ?? "") : "",
     output_type: task.output_type_id ? (outputTypesById[task.output_type_id]?.name ?? "") : "",
     priority: PRIORITY_LABELS[task.priority],
     status: STATUS_LABELS[task.status],

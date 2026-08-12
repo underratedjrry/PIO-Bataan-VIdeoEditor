@@ -4,11 +4,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import type { PerformanceStats } from "@/lib/tasks/narrative";
 import { CATEGORICAL, CHROME, SEQUENTIAL_BLUE, STATUS_COLORS } from "@/lib/palette";
 import { useColorScheme } from "@/lib/useColorScheme";
-import {
-  PRIORITY_LABELS,
-  SEGMENT_LABELS,
-  STATUS_LABELS,
-} from "@/lib/tasks/constants";
+import { PRIORITY_LABELS, STATUS_LABELS } from "@/lib/tasks/constants";
 import type { Priority, Status } from "@/types/database";
 
 function toChartRows(
@@ -93,7 +89,7 @@ function HorizontalBarChart({
 export function InsightsCharts({ stats }: { stats: PerformanceStats }) {
   const scheme = useColorScheme();
 
-  const segmentRows = toChartRows(stats.bySegment, SEGMENT_LABELS as Record<string, string>);
+  const segmentRows = toChartRows(stats.bySegment, {});
   const priorityRows = toChartRows(stats.byPriority, PRIORITY_LABELS as Record<string, string>);
   const statusRows = toChartRows(stats.byStatus, STATUS_LABELS as Record<string, string>);
 

@@ -7,14 +7,15 @@ export async function computePerformanceStats(
   supabase: SupabaseClient<Database>,
   userId: string,
 ): Promise<PerformanceStats> {
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("assigned_to", userId);
+  const [{ data, error }, { data: segments }] = await Promise.all([
+    supabase.from("tasks").select("*").eq("assigned_to", userId),
+    supabase.from("segments").select("*"),
+  ]);
 
   if (error) throw new Error(error.message);
 
   const tasks = (data ?? []) as Task[];
+  const segmentNameById = new Map((segments ?? []).map((s) => [s.id, s.name]));
   const now = Date.now();
 
   const completed = tasks.filter((t) => t.status === "done");
@@ -30,8 +31,10 @@ export async function computePerformanceStats(
   const bySegment: Record<string, number> = {};
   const byStatus: Record<string, number> = {};
   for (const task of tasks) {
+    const segmentName =
+      (task.segment_id && segmentNameById.get(task.segment_id)) || "Unassigned";
     byPriority[task.priority] = (byPriority[task.priority] ?? 0) + 1;
-    bySegment[task.segment] = (bySegment[task.segment] ?? 0) + 1;
+    bySegment[segmentName] = (bySegment[segmentName] ?? 0) + 1;
     byStatus[task.status] = (byStatus[task.status] ?? 0) + 1;
   }
 

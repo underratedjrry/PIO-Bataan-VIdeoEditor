@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, Priority, Segment, Status, Task } from "@/types/database";
+import type { Database, Priority, Status, Task } from "@/types/database";
 import { PRIORITY_ORDER } from "./constants";
 
 export type SearchParamsRecord = Record<string, string | string[] | undefined>;
@@ -9,7 +9,7 @@ const DEFAULT_PAGE_SIZE = 25;
 
 export interface TaskFilters {
   priority?: string;
-  segment?: string;
+  segmentId?: string;
   status?: string;
   assignedTo?: string;
   outputTypeId?: string;
@@ -35,7 +35,7 @@ export function parseTaskFilters(searchParams: SearchParamsRecord): TaskFilters 
 
   return {
     priority: get("priority") || undefined,
-    segment: get("segment") || undefined,
+    segmentId: get("segmentId") || undefined,
     status: get("status") || undefined,
     assignedTo: get("assignedTo") || undefined,
     outputTypeId: get("outputTypeId") || undefined,
@@ -58,7 +58,7 @@ export async function fetchFilteredTasks(
   // These come from URL search params, so they aren't guaranteed to be valid
   // enum values - an invalid value just yields zero matches at query time.
   if (filters.priority) query = query.eq("priority", filters.priority as Priority);
-  if (filters.segment) query = query.eq("segment", filters.segment as Segment);
+  if (filters.segmentId) query = query.eq("segment_id", filters.segmentId);
   if (filters.status) query = query.eq("status", filters.status as Status);
   if (filters.assignedTo) query = query.eq("assigned_to", filters.assignedTo);
   if (filters.outputTypeId) query = query.eq("output_type_id", filters.outputTypeId);

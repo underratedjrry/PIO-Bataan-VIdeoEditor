@@ -105,3 +105,42 @@ export async function deleteWriter(id: string) {
 
   revalidatePath("/settings");
 }
+
+export async function createSegment(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) throw new Error("Name is required");
+
+  const { error } = await supabase.from("segments").insert({ name });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/settings");
+}
+
+export async function renameSegment(id: string, name: string) {
+  const { supabase } = await requireAdmin();
+  const trimmed = name.trim();
+  if (!trimmed) throw new Error("Name is required");
+
+  const { error } = await supabase.from("segments").update({ name: trimmed }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/settings");
+}
+
+export async function toggleSegment(id: string, isActive: boolean) {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("segments").update({ is_active: isActive }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/settings");
+}
+
+// Safe to hard-delete: tasks.segment_id is ON DELETE SET NULL.
+export async function deleteSegment(id: string) {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("segments").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/settings");
+}

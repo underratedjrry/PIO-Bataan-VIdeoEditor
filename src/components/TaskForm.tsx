@@ -3,18 +3,11 @@
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  PRIORITIES,
-  PRIORITY_LABELS,
-  SEGMENTS,
-  SEGMENT_LABELS,
-  STATUSES,
-  STATUS_LABELS,
-} from "@/lib/tasks/constants";
+import { PRIORITIES, PRIORITY_LABELS, STATUSES, STATUS_LABELS } from "@/lib/tasks/constants";
 import { taskFormSchema, type TaskFormValues } from "@/lib/tasks/schema";
 import { runWithToast } from "@/lib/toast-action";
 import { CheckIcon } from "@/components/icons";
-import type { OutputType, Profile, Task, Writer } from "@/types/database";
+import type { OutputType, Profile, Segment, Task, Writer } from "@/types/database";
 
 function toDatetimeLocal(value: string | null | undefined) {
   if (!value) return "";
@@ -28,6 +21,7 @@ export function TaskForm({
   profiles,
   outputTypes,
   writers,
+  segments,
   onSubmit,
   submitLabel,
 }: {
@@ -35,6 +29,7 @@ export function TaskForm({
   profiles: Profile[];
   outputTypes: OutputType[];
   writers: Writer[];
+  segments: Segment[];
   onSubmit: (formData: FormData) => Promise<void>;
   submitLabel: string;
 }) {
@@ -48,10 +43,11 @@ export function TaskForm({
     defaultValues: {
       title: task?.title ?? "",
       description: task?.description ?? "",
-      segment: task?.segment ?? "other",
+      segment_id: task?.segment_id ?? "",
       priority: task?.priority ?? "medium",
       status: task?.status ?? "todo",
       due_date: toDatetimeLocal(task?.due_date),
+      created_at: toDatetimeLocal(task?.created_at) || toDatetimeLocal(new Date().toISOString()),
       assigned_to: task?.assigned_to ?? "",
       output_type_id: task?.output_type_id ?? "",
       writer_id: task?.writer_id ?? "",
@@ -63,10 +59,11 @@ export function TaskForm({
     const formData = new FormData();
     formData.set("title", values.title);
     formData.set("description", values.description ?? "");
-    formData.set("segment", values.segment);
+    formData.set("segment_id", values.segment_id ?? "");
     formData.set("priority", values.priority);
     formData.set("status", values.status);
     formData.set("due_date", values.due_date ?? "");
+    formData.set("created_at", values.created_at ?? "");
     formData.set("assigned_to", values.assigned_to ?? "");
     formData.set("output_type_id", values.output_type_id ?? "");
     formData.set("writer_id", values.writer_id ?? "");
@@ -87,11 +84,12 @@ export function TaskForm({
       </Field>
 
       <div className="grid grid-cols-2 gap-4">
-        <Field label="Segment" error={errors.segment?.message}>
-          <select {...register("segment")} className="form-input">
-            {SEGMENTS.map((s) => (
-              <option key={s} value={s}>
-                {SEGMENT_LABELS[s]}
+        <Field label="Segment" error={errors.segment_id?.message}>
+          <select {...register("segment_id")} className="form-input">
+            <option value="">None</option>
+            {segments.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
               </option>
             ))}
           </select>
@@ -130,6 +128,10 @@ export function TaskForm({
 
         <Field label="Due date" error={errors.due_date?.message}>
           <input type="datetime-local" {...register("due_date")} className="form-input" />
+        </Field>
+
+        <Field label="Task created" error={errors.created_at?.message}>
+          <input type="datetime-local" {...register("created_at")} className="form-input" />
         </Field>
 
         <Field label="Writer" error={errors.writer_id?.message}>

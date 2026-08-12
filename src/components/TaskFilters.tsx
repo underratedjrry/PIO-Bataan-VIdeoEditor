@@ -1,17 +1,10 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  PRIORITIES,
-  PRIORITY_LABELS,
-  SEGMENTS,
-  SEGMENT_LABELS,
-  STATUSES,
-  STATUS_LABELS,
-} from "@/lib/tasks/constants";
+import { PRIORITIES, PRIORITY_LABELS, STATUSES, STATUS_LABELS } from "@/lib/tasks/constants";
 import { PAGE_SIZE_OPTIONS } from "@/lib/tasks/query";
 import { ArrowUpDownIcon, DownloadIcon } from "./icons";
-import type { OutputType } from "@/types/database";
+import type { OutputType, Segment } from "@/types/database";
 
 const SORT_OPTIONS = [
   { value: "due_date", label: "Due Date" },
@@ -20,7 +13,13 @@ const SORT_OPTIONS = [
   { value: "title", label: "Title" },
 ];
 
-export function TaskFilters({ outputTypes }: { outputTypes: OutputType[] }) {
+export function TaskFilters({
+  outputTypes,
+  segments,
+}: {
+  outputTypes: OutputType[];
+  segments: Segment[];
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -54,9 +53,12 @@ export function TaskFilters({ outputTypes }: { outputTypes: OutputType[] }) {
       />
       <FilterSelect
         label="Segment"
-        value={searchParams.get("segment") ?? ""}
-        onChange={(v) => update("segment", v)}
-        options={[{ value: "", label: "All" }, ...SEGMENTS.map((s) => ({ value: s, label: SEGMENT_LABELS[s] }))]}
+        value={searchParams.get("segmentId") ?? ""}
+        onChange={(v) => update("segmentId", v)}
+        options={[
+          { value: "", label: "All" },
+          ...segments.map((s) => ({ value: s.id, label: s.name })),
+        ]}
       />
       <FilterSelect
         label="Output Type"

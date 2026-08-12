@@ -6,7 +6,7 @@ import { TaskFilters } from "@/components/TaskFilters";
 import { TaskTable } from "@/components/TaskTable";
 import { Pagination } from "@/components/Pagination";
 import { PlusIcon } from "@/components/icons";
-import type { OutputType, Profile } from "@/types/database";
+import type { OutputType, Profile, Segment } from "@/types/database";
 
 export default async function TasksPage({
   searchParams,
@@ -17,11 +17,13 @@ export default async function TasksPage({
   const filters = parseTaskFilters(await searchParams);
 
   const supabase = await createClient();
-  const [{ tasks, totalCount }, { data: profiles }, { data: outputTypes }] = await Promise.all([
-    fetchFilteredTasks(supabase, filters),
-    supabase.from("profiles").select("*"),
-    supabase.from("output_types").select("*").order("name"),
-  ]);
+  const [{ tasks, totalCount }, { data: profiles }, { data: outputTypes }, { data: segments }] =
+    await Promise.all([
+      fetchFilteredTasks(supabase, filters),
+      supabase.from("profiles").select("*"),
+      supabase.from("output_types").select("*").order("name"),
+      supabase.from("segments").select("*").order("name"),
+    ]);
   const latestCheckByTaskId = await fetchLatestChecksByTaskId(
     supabase,
     tasks.map((t) => t.id),
@@ -32,6 +34,9 @@ export default async function TasksPage({
   );
   const outputTypesById = Object.fromEntries(
     (outputTypes ?? []).map((ot) => [ot.id, ot as OutputType]),
+  );
+  const segmentsById = Object.fromEntries(
+    (segments ?? []).map((s) => [s.id, s as Segment]),
   );
   const canCreate = profile.role !== "viewer";
   const canEditStatus = profile.role !== "viewer";
@@ -51,11 +56,12 @@ export default async function TasksPage({
           </Link>
         )}
       </div>
-      <TaskFilters outputTypes={outputTypes ?? []} />
+      <TaskFilters outputTypes={outputTypes ?? []} segments={segments ?? []} />
       <TaskTable
         tasks={tasks}
         profilesById={profilesById}
         outputTypesById={outputTypesById}
+        segmentsById={segmentsById}
         latestCheckByTaskId={latestCheckByTaskId}
         currentUser={{ id: profile.id, role: profile.role }}
         canEditStatus={canEditStatus}

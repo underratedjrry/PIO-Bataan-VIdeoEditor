@@ -19,12 +19,12 @@ Admin/Editor/Viewer roles.
 1. Create a project at [supabase.com](https://supabase.com).
 2. In the SQL Editor, run these migrations **in order**:
    `0001_init.sql`, `0002_editorial_workflow.sql`, `0003_user_management.sql`,
-   `0004_output_link.sql`, `0005_checked_by_writer.sql`, then
-   `0006_task_timing.sql` (all under `supabase/migrations/`). Together these
-   create all tables, RLS policies, seed data (default Output Types), and a
-   trigger that auto-provisions a `profiles` row on signup - **the first
-   user to sign up becomes `admin`**, everyone after that defaults to
-   `editor`.
+   `0004_output_link.sql`, `0005_checked_by_writer.sql`,
+   `0006_task_timing.sql`, then `0007_segments_lookup.sql` (all under
+   `supabase/migrations/`). Together these create all tables, RLS policies,
+   seed data (default Output Types and Segments), and a trigger that
+   auto-provisions a `profiles` row on signup - **the first user to sign up
+   becomes `admin`**, everyone after that defaults to `editor`.
 3. In **Authentication -> Providers -> Email**, disable "Confirm email" for
    the simplest local/demo flow (or leave it on and users will be prompted
    to confirm before their first sign-in).
@@ -135,9 +135,15 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
 ## Notes
 
 - Sort/filter/pagination state lives in the URL
-  (`?priority=&segment=&status=&outputTypeId=&sort=&dir=&page=&pageSize=`),
+  (`?priority=&segmentId=&status=&outputTypeId=&sort=&dir=&page=&pageSize=`),
   so a given view is shareable/bookmarkable; CSV export re-applies the same
   filters as whatever's on screen (across all pages, not just the current one).
+- **Segments** (like Output Types and Writers) are an admin-editable lookup
+  managed from Settings, not a fixed list - add/rename/deactivate/delete from
+  the Settings > Segments tab.
+- A task's **Task created** date/time is an editable field on the task form
+  (defaults to the current date/time for new tasks), so it can be backdated
+  to when work actually started instead of when the record was entered.
 - Clicking a task in the list opens it in a modal (view/edit/delete, plus
   Checked By) via a Next.js intercepting route - the same URL
   (`/tasks/[id]`) also works as a normal full page on direct load/refresh.

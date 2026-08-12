@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { OutputType, Profile, Writer } from "@/types/database";
+import type { OutputType, Profile, Segment, Writer } from "@/types/database";
 import { UserRow } from "./UserRow";
 import { UserModal } from "./UserModal";
 import { AddUserForm } from "./AddUserForm";
@@ -9,18 +9,23 @@ import { LookupRow } from "./LookupRow";
 import { runWithToast } from "@/lib/toast-action";
 import {
   createOutputType,
+  createSegment,
   createWriter,
   deleteOutputType,
+  deleteSegment,
   deleteWriter,
   renameOutputType,
+  renameSegment,
   renameWriter,
   toggleOutputType,
+  toggleSegment,
   toggleWriter,
 } from "@/lib/lookups/actions";
 import { PlusIcon } from "@/components/icons";
 
 const TABS = [
   { key: "users", label: "Users" },
+  { key: "segments", label: "Segments" },
   { key: "outputTypes", label: "Output Types" },
   { key: "writers", label: "Writers" },
 ] as const;
@@ -31,11 +36,13 @@ export function SettingsTabs({
   profiles,
   outputTypes,
   writers,
+  segments,
   currentUserId,
 }: {
   profiles: Profile[];
   outputTypes: OutputType[];
   writers: Writer[];
+  segments: Segment[];
   currentUserId: string;
 }) {
   const [tab, setTab] = useState<TabKey>("users");
@@ -89,6 +96,17 @@ export function SettingsTabs({
         </div>
       )}
 
+      {tab === "segments" && (
+        <LookupSection
+          items={segments}
+          itemLabel="segment"
+          onCreate={createSegment}
+          onRename={renameSegment}
+          onToggle={toggleSegment}
+          onDelete={deleteSegment}
+        />
+      )}
+
       {tab === "outputTypes" && (
         <LookupSection
           items={outputTypes}
@@ -130,7 +148,7 @@ function LookupSection({
   onToggle,
   onDelete,
 }: {
-  items: (OutputType | Writer)[];
+  items: (OutputType | Writer | Segment)[];
   itemLabel: string;
   onCreate: (formData: FormData) => Promise<void>;
   onRename: (id: string, name: string) => Promise<void>;

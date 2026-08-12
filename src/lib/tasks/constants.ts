@@ -1,16 +1,4 @@
-import type { CheckStage, CheckStatus, Priority, Segment, Status } from "@/types/database";
-
-export const SEGMENT_LABELS: Record<Segment, string> = {
-  rough_cut: "Rough Cut",
-  fine_cut: "Fine Cut",
-  color_grading: "Color Grading",
-  sound_mix: "Sound Design / Mix",
-  motion_graphics: "Motion Graphics / VFX",
-  subtitles: "Subtitles / Captions",
-  client_review: "Client Review",
-  final_render: "Final Render",
-  other: "Other",
-};
+import type { CheckStage, CheckStatus, Priority, Status } from "@/types/database";
 
 export const PRIORITY_LABELS: Record<Priority, string> = {
   low: "Low",
@@ -49,7 +37,6 @@ export const STATUS_BADGE_CLASSES: Record<Status, string> = {
   blocked: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
 };
 
-export const SEGMENTS = Object.keys(SEGMENT_LABELS) as Segment[];
 export const PRIORITIES = Object.keys(PRIORITY_LABELS) as Priority[];
 export const STATUSES = Object.keys(STATUS_LABELS) as Status[];
 

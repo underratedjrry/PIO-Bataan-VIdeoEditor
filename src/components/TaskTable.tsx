@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { OutputType, Profile, Role, Task, TaskCheck } from "@/types/database";
-import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS, SEGMENT_LABELS } from "@/lib/tasks/constants";
+import type { OutputType, Profile, Role, Segment, Task, TaskCheck } from "@/types/database";
+import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS } from "@/lib/tasks/constants";
 import { deleteTask } from "@/lib/tasks/actions";
 import { Badge } from "./Badge";
 import { StatusSelect } from "./StatusSelect";
@@ -11,6 +11,7 @@ export function TaskTable({
   tasks,
   profilesById,
   outputTypesById,
+  segmentsById,
   latestCheckByTaskId,
   currentUser,
   canEditStatus,
@@ -18,6 +19,7 @@ export function TaskTable({
   tasks: Task[];
   profilesById: Record<string, Profile>;
   outputTypesById: Record<string, OutputType>;
+  segmentsById: Record<string, Segment>;
   latestCheckByTaskId: Record<string, TaskCheck>;
   currentUser: { id: string; role: Role };
   canEditStatus: boolean;
@@ -83,7 +85,7 @@ export function TaskTable({
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
-                  {SEGMENT_LABELS[task.segment]}
+                  {task.segment_id ? (segmentsById[task.segment_id]?.name ?? "-") : "-"}
                 </td>
                 <td
                   className={`px-4 py-3 ${

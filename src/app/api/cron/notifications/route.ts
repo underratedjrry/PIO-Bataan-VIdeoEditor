@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendDueSoonDigestEmail, sendOverdueDigestEmail } from "@/lib/resend";
+import { sendDueSoonDigestEmail, sendOverdueDigestEmail, type TaskWithSegmentName } from "@/lib/resend";
 import type { Task } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -23,17 +23,20 @@ export async function GET(request: NextRequest) {
   const now = new Date();
   const dueSoonCutoff = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-  const { data: openTasks, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .neq("status", "done")
-    .not("due_date", "is", null);
+  const [{ data: openTasks, error }, { data: segments }] = await Promise.all([
+    supabase.from("tasks").select("*").neq("status", "done").not("due_date", "is", null),
+    supabase.from("segments").select("*"),
+  ]);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const tasks = (openTasks ?? []) as Task[];
+  const segmentNameById = new Map((segments ?? []).map((s) => [s.id, s.name]));
+  const tasks = (openTasks ?? []).map((t) => ({
+    ...(t as Task),
+    segmentName: (t.segment_id && segmentNameById.get(t.segment_id)) || "Unassigned",
+  }));
   const dueSoon = tasks.filter(
     (t) => t.due_date! >= now.toISOString() && t.due_date! <= dueSoonCutoff.toISOString(),
   );
@@ -54,8 +57,8 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const dueSoonByRecipient = new Map<string, Task[]>();
-  const overdueByRecipient = new Map<string, Task[]>();
+  const dueSoonByRecipient = new Map<string, TaskWithSegmentName[]>();
+  const overdueByRecipient = new Map<string, TaskWithSegmentName[]>();
   const toLog: { task_id: string; type: "due_soon" | "overdue" }[] = [];
 
   for (const task of dueSoon) {

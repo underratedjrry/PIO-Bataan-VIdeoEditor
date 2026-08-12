@@ -1,16 +1,5 @@
 export type Role = "admin" | "editor" | "viewer";
 
-export type Segment =
-  | "rough_cut"
-  | "fine_cut"
-  | "color_grading"
-  | "sound_mix"
-  | "motion_graphics"
-  | "subtitles"
-  | "client_review"
-  | "final_render"
-  | "other";
-
 export type Priority = "low" | "medium" | "high" | "urgent";
 
 export type Status = "todo" | "in_progress" | "in_review" | "done" | "blocked";
@@ -38,7 +27,7 @@ export type Task = {
   id: string;
   title: string;
   description: string | null;
-  segment: Segment;
+  segment_id: string | null;
   priority: Priority;
   status: Status;
   due_date: string | null;
@@ -54,6 +43,13 @@ export type Task = {
 };
 
 export type OutputType = {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type Segment = {
   id: string;
   name: string;
   is_active: boolean;
@@ -149,6 +145,12 @@ export type Database = {
         Row: Writer;
         Insert: Partial<Writer> & { name: string };
         Update: Partial<Writer>;
+        Relationships: [];
+      };
+      segments: {
+        Row: Segment;
+        Insert: Partial<Segment> & { name: string };
+        Update: Partial<Segment>;
         Relationships: [];
       };
       task_checks: {

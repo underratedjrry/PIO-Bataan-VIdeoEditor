@@ -8,6 +8,17 @@ import type { Status, Task } from "@/types/database";
 import { CHECK_STAGE_LABELS, CHECK_STATUS_LABELS, PRIORITY_LABELS, STATUS_LABELS } from "./constants";
 import { taskCheckFormSchema, taskFormSchema } from "./schema";
 
+// Emails render the segment as free text, so this resolves the id to its
+// current display name (segments are an editable lookup, not an enum).
+async function resolveSegmentName(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  segmentId: string | null,
+): Promise<string> {
+  if (!segmentId) return "Unassigned";
+  const { data } = await supabase.from("segments").select("name").eq("id", segmentId).single();
+  return data?.name ?? "Unassigned";
+}
+
 async function requireUser() {
   const supabase = await createClient();
   const {
@@ -41,10 +52,11 @@ function parseTaskForm(formData: FormData) {
   return taskFormSchema.parse({
     title: String(formData.get("title") ?? ""),
     description: String(formData.get("description") ?? ""),
-    segment: String(formData.get("segment") ?? "other"),
+    segment_id: String(formData.get("segment_id") ?? ""),
     priority: String(formData.get("priority") ?? "medium"),
     status: String(formData.get("status") ?? "todo"),
     due_date: String(formData.get("due_date") ?? ""),
+    created_at: String(formData.get("created_at") ?? ""),
     assigned_to: String(formData.get("assigned_to") ?? ""),
     output_type_id: String(formData.get("output_type_id") ?? ""),
     writer_id: String(formData.get("writer_id") ?? ""),
@@ -61,10 +73,11 @@ export async function createTask(formData: FormData) {
     .insert({
       title: values.title,
       description: values.description || null,
-      segment: values.segment,
+      segment_id: values.segment_id || null,
       priority: values.priority,
       status: values.status,
       due_date: values.due_date ? new Date(values.due_date).toISOString() : null,
+      created_at: values.created_at ? new Date(values.created_at).toISOString() : undefined,
       assigned_to: values.assigned_to || null,
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
@@ -91,7 +104,8 @@ export async function createTask(formData: FormData) {
       .eq("id", task.assigned_to)
       .single();
     if (assignee?.email) {
-      await sendTaskAssignedEmail(assignee.email, task as Task);
+      const segmentName = await resolveSegmentName(supabase, task.segment_id);
+      await sendTaskAssignedEmail(assignee.email, { ...(task as Task), segmentName });
     }
   }
 
@@ -116,10 +130,11 @@ export async function updateTask(taskId: string, formData: FormData) {
     .update({
       title: values.title,
       description: values.description || null,
-      segment: values.segment,
+      segment_id: values.segment_id || null,
       priority: values.priority,
       status: values.status,
       due_date: values.due_date ? new Date(values.due_date).toISOString() : null,
+      created_at: values.created_at ? new Date(values.created_at).toISOString() : existing.created_at,
       assigned_to: values.assigned_to || null,
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
@@ -162,7 +177,10 @@ export async function updateTask(taskId: string, formData: FormData) {
       .select("email")
       .eq("id", updated.assigned_to)
       .single();
-    if (assignee?.email) await sendTaskAssignedEmail(assignee.email, updated as Task);
+    if (assignee?.email) {
+      const segmentName = await resolveSegmentName(supabase, updated.segment_id);
+      await sendTaskAssignedEmail(assignee.email, { ...(updated as Task), segmentName });
+    }
     notifyIds.delete(updated.assigned_to);
   }
 

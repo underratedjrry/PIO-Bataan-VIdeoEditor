@@ -8,11 +8,13 @@ export default async function SettingsPage() {
   if (profile.role !== "admin") redirect("/tasks");
 
   const supabase = await createClient();
-  const [{ data: profiles }, { data: outputTypes }, { data: writers }] = await Promise.all([
-    supabase.from("profiles").select("*").order("full_name"),
-    supabase.from("output_types").select("*").order("name"),
-    supabase.from("writers").select("*").order("name"),
-  ]);
+  const [{ data: profiles }, { data: outputTypes }, { data: writers }, { data: segments }] =
+    await Promise.all([
+      supabase.from("profiles").select("*").order("full_name"),
+      supabase.from("output_types").select("*").order("name"),
+      supabase.from("writers").select("*").order("name"),
+      supabase.from("segments").select("*").order("name"),
+    ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -21,6 +23,7 @@ export default async function SettingsPage() {
         profiles={profiles ?? []}
         outputTypes={outputTypes ?? []}
         writers={writers ?? []}
+        segments={segments ?? []}
         currentUserId={user.id}
       />
     </div>

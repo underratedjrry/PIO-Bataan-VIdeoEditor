@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 import type { Task } from "@/types/database";
-import { PRIORITY_LABELS, SEGMENT_LABELS } from "@/lib/tasks/constants";
+import { PRIORITY_LABELS } from "@/lib/tasks/constants";
+
+export type TaskWithSegmentName = Task & { segmentName: string };
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -42,15 +44,15 @@ function layout(title: string, bodyHtml: string) {
   </div>`;
 }
 
-function taskMetaRow(task: Task) {
+function taskMetaRow(task: TaskWithSegmentName) {
   return `<p style="margin:4px 0;color:#3f3f46;">
-    Segment: ${SEGMENT_LABELS[task.segment]}<br/>
+    Segment: ${task.segmentName}<br/>
     Priority: ${PRIORITY_LABELS[task.priority]}<br/>
     Due: ${formatDue(task)}
   </p>`;
 }
 
-export async function sendTaskAssignedEmail(to: string, task: Task) {
+export async function sendTaskAssignedEmail(to: string, task: TaskWithSegmentName) {
   await send(
     to,
     `Assigned: ${task.title}`,
@@ -80,20 +82,20 @@ export async function sendTaskUpdatedEmail(
   );
 }
 
-function taskListRows(tasks: Task[]) {
+function taskListRows(tasks: TaskWithSegmentName[]) {
   return tasks
     .map(
       (task) => `<li style="margin-bottom:10px;">
         <a href="${taskLink(task.id)}" style="font-weight:600;">${task.title}</a><br/>
         <span style="color:#71717a;font-size:13px;">
-          ${SEGMENT_LABELS[task.segment]} - ${PRIORITY_LABELS[task.priority]} - due ${formatDue(task)}
+          ${task.segmentName} - ${PRIORITY_LABELS[task.priority]} - due ${formatDue(task)}
         </span>
       </li>`,
     )
     .join("");
 }
 
-export async function sendDueSoonDigestEmail(to: string, tasks: Task[]) {
+export async function sendDueSoonDigestEmail(to: string, tasks: TaskWithSegmentName[]) {
   if (tasks.length === 0) return;
   await send(
     to,
@@ -105,7 +107,7 @@ export async function sendDueSoonDigestEmail(to: string, tasks: Task[]) {
   );
 }
 
-export async function sendOverdueDigestEmail(to: string, tasks: Task[]) {
+export async function sendOverdueDigestEmail(to: string, tasks: TaskWithSegmentName[]) {
   if (tasks.length === 0) return;
   await send(
     to,

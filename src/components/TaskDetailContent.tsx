@@ -12,10 +12,9 @@ import {
   CHECK_STATUS_LABELS,
   PRIORITY_BADGE_CLASSES,
   PRIORITY_LABELS,
-  SEGMENT_LABELS,
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
-import type { OutputType, Profile, Task, Writer } from "@/types/database";
+import type { OutputType, Profile, Segment, Task, Writer } from "@/types/database";
 
 export async function TaskDetailContent({ id }: { id: string }) {
   const { profile } = await getCurrentProfile();
@@ -27,6 +26,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
     { data: activity },
     { data: outputTypes },
     { data: writers },
+    { data: segments },
     { data: checks },
   ] = await Promise.all([
     supabase.from("tasks").select("*").eq("id", id).maybeSingle(),
@@ -38,6 +38,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
       .order("created_at", { ascending: false }),
     supabase.from("output_types").select("*").order("name"),
     supabase.from("writers").select("*").order("name"),
+    supabase.from("segments").select("*").order("name"),
     supabase
       .from("task_checks")
       .select("*")
@@ -54,6 +55,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
     (outputTypes ?? []).map((ot) => [ot.id, ot as OutputType]),
   );
   const writersById = Object.fromEntries((writers ?? []).map((w) => [w.id, w as Writer]));
+  const segmentsById = Object.fromEntries((segments ?? []).map((s) => [s.id, s as Segment]));
 
   const canEdit =
     profile.role === "admin" ||
@@ -81,6 +83,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
           profiles={profiles ?? []}
           outputTypes={outputTypes ?? []}
           writers={writers ?? []}
+          segments={segments ?? []}
           onSubmit={boundUpdate}
           submitLabel="Save changes"
         />
@@ -90,6 +93,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
           assignee={task.assigned_to ? profilesById[task.assigned_to] : undefined}
           outputType={task.output_type_id ? outputTypesById[task.output_type_id] : undefined}
           writer={task.writer_id ? writersById[task.writer_id] : undefined}
+          segment={task.segment_id ? segmentsById[task.segment_id] : undefined}
         />
       )}
 
@@ -133,11 +137,11 @@ export async function TaskDetailContent({ id }: { id: string }) {
 
       <div>
         <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-50">Activity</h2>
-        <ul className="flex flex-col gap-2 text-sm">
+        <ul className="flex max-h-64 flex-col gap-2 overflow-y-auto pr-1 text-sm">
           {(activity ?? []).map((entry) => (
             <li
               key={entry.id}
-              className="flex justify-between border-b border-slate-100 pb-2 text-slate-600 dark:border-slate-800 dark:text-slate-400"
+              className="flex justify-between gap-3 border-b border-slate-100 pb-2 text-slate-600 dark:border-slate-800 dark:text-slate-400"
             >
               <span>
                 <span className="font-medium text-slate-900 dark:text-slate-100">
@@ -145,7 +149,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
                 </span>{" "}
                 {entry.change_summary}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="shrink-0 text-xs text-slate-400">
                 {new Date(entry.created_at).toLocaleString()}
               </span>
             </li>
@@ -164,11 +168,13 @@ function ReadOnlyTaskDetails({
   assignee,
   outputType,
   writer,
+  segment,
 }: {
   task: Task;
   assignee?: Profile;
   outputType?: OutputType;
   writer?: Writer;
+  segment?: Segment;
 }) {
   return (
     <div className="flex max-w-xl flex-col gap-3 text-sm">
@@ -179,9 +185,11 @@ function ReadOnlyTaskDetails({
         <Badge className={PRIORITY_BADGE_CLASSES[task.priority]}>
           {PRIORITY_LABELS[task.priority]}
         </Badge>
-        <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-          {SEGMENT_LABELS[task.segment]}
-        </Badge>
+        {segment && (
+          <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            {segment.name}
+          </Badge>
+        )}
         <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
           {STATUS_LABELS[task.status]}
         </Badge>
@@ -191,6 +199,9 @@ function ReadOnlyTaskDetails({
           </Badge>
         )}
       </div>
+      <p className="text-slate-500 dark:text-slate-400">
+        Task created: {new Date(task.created_at).toLocaleString()}
+      </p>
       <p className="text-slate-500 dark:text-slate-400">
         Due: {task.due_date ? new Date(task.due_date).toLocaleString() : "No due date"}
       </p>

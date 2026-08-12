@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { XIcon } from "@/components/icons";
 
 export function Modal({
   children,
@@ -32,14 +33,14 @@ export function Modal({
         onClick={close}
         className="absolute inset-0 cursor-default"
       />
-      <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl dark:bg-slate-800">
+      <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 pr-12 shadow-xl dark:bg-slate-800">
         <button
           type="button"
           onClick={close}
           aria-label="Close"
-          className="absolute right-4 top-4 text-xl leading-none text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+          className="absolute right-3 top-3 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200"
         >
-          &times;
+          <XIcon className="h-4 w-4" />
         </button>
         {children}
       </div>

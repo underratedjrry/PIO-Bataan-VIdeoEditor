@@ -1,14 +1,15 @@
 import { z } from "zod";
-import type { CheckStage, CheckStatus, Priority, Segment, Status } from "@/types/database";
-import { CHECK_STAGES, CHECK_STATUSES, PRIORITIES, SEGMENTS, STATUSES } from "./constants";
+import type { CheckStage, CheckStatus, Priority, Status } from "@/types/database";
+import { CHECK_STAGES, CHECK_STATUSES, PRIORITIES, STATUSES } from "./constants";
 
 export const taskFormSchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
   description: z.string().max(5000).optional().or(z.literal("")),
-  segment: z.enum(SEGMENTS as [Segment, ...Segment[]]),
+  segment_id: z.string().uuid().optional().or(z.literal("")),
   priority: z.enum(PRIORITIES as [Priority, ...Priority[]]),
   status: z.enum(STATUSES as [Status, ...Status[]]),
   due_date: z.string().optional().or(z.literal("")),
+  created_at: z.string().optional().or(z.literal("")),
   assigned_to: z.string().uuid().optional().or(z.literal("")),
   output_type_id: z.string().uuid().optional().or(z.literal("")),
   writer_id: z.string().uuid().optional().or(z.literal("")),
