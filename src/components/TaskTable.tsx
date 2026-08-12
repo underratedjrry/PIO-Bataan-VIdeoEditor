@@ -1,12 +1,6 @@
 import Link from "next/link";
 import type { OutputType, Profile, Task, TaskCheck } from "@/types/database";
-import {
-  CHECK_STATUS_BADGE_CLASSES,
-  CHECK_STATUS_LABELS,
-  PRIORITY_BADGE_CLASSES,
-  PRIORITY_LABELS,
-  SEGMENT_LABELS,
-} from "@/lib/tasks/constants";
+import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS, SEGMENT_LABELS } from "@/lib/tasks/constants";
 import { Badge } from "./Badge";
 import { StatusSelect } from "./StatusSelect";
 
@@ -42,14 +36,13 @@ export function TaskTable({
       <table className="w-full min-w-[880px] text-left text-sm">
         <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
           <tr>
+            <th className="px-4 py-3">Output Type</th>
             <th className="px-4 py-3">Title</th>
             <th className="px-4 py-3">Segment</th>
-            <th className="px-4 py-3">Output Type</th>
-            <th className="px-4 py-3">Priority</th>
-            <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Due</th>
             <th className="px-4 py-3">Assignee</th>
             <th className="px-4 py-3">Latest Check</th>
+            <th className="px-4 py-3">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -62,6 +55,11 @@ export function TaskTable({
 
             return (
               <tr key={task.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
+                <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
+                  {task.output_type_id
+                    ? (outputTypesById[task.output_type_id]?.name ?? "-")
+                    : "-"}
+                </td>
                 <td className="px-4 py-3">
                   <Link
                     href={`/tasks/${task.id}`}
@@ -72,19 +70,6 @@ export function TaskTable({
                 </td>
                 <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                   {SEGMENT_LABELS[task.segment]}
-                </td>
-                <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
-                  {task.output_type_id
-                    ? (outputTypesById[task.output_type_id]?.name ?? "-")
-                    : "-"}
-                </td>
-                <td className="px-4 py-3">
-                  <Badge className={PRIORITY_BADGE_CLASSES[task.priority]}>
-                    {PRIORITY_LABELS[task.priority]}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3">
-                  <StatusSelect taskId={task.id} status={task.status} disabled={!canEditStatus} />
                 </td>
                 <td
                   className={`px-4 py-3 ${
@@ -108,6 +93,9 @@ export function TaskTable({
                   ) : (
                     <span className="text-slate-400">-</span>
                   )}
+                </td>
+                <td className="px-4 py-3">
+                  <StatusSelect taskId={task.id} status={task.status} disabled={!canEditStatus} />
                 </td>
               </tr>
             );

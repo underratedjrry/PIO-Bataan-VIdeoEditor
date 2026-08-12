@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { fetchFilteredTasks, fetchLatestChecksByTaskId, parseTaskFilters } from "@/lib/tasks/query";
 import { TaskFilters } from "@/components/TaskFilters";
 import { TaskTable } from "@/components/TaskTable";
+import { Pagination } from "@/components/Pagination";
 import type { OutputType, Profile } from "@/types/database";
 
 export default async function TasksPage({
@@ -15,7 +16,7 @@ export default async function TasksPage({
   const filters = parseTaskFilters(await searchParams);
 
   const supabase = await createClient();
-  const [tasks, { data: profiles }, { data: outputTypes }] = await Promise.all([
+  const [{ tasks, totalCount }, { data: profiles }, { data: outputTypes }] = await Promise.all([
     fetchFilteredTasks(supabase, filters),
     supabase.from("profiles").select("*"),
     supabase.from("output_types").select("*").order("name"),
@@ -55,6 +56,7 @@ export default async function TasksPage({
         latestCheckByTaskId={latestCheckByTaskId}
         canEditStatus={canEditStatus}
       />
+      <Pagination page={filters.page} pageSize={filters.pageSize} totalCount={totalCount} />
     </div>
   );
 }

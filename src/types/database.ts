@@ -46,6 +46,7 @@ export type Task = {
   created_by: string | null;
   output_type_id: string | null;
   writer_id: string | null;
+  output_link: string | null;
   created_at: string;
   updated_at: string;
 };

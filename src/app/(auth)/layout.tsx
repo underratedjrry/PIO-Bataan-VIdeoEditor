@@ -10,10 +10,14 @@ export default function AuthLayout({
       <div className="w-full max-w-sm overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="brand-accent-strip" />
         <div className="flex flex-col items-center p-8 text-center">
-          <Image src="/logo-icon.png" alt="" width={106} height={106} priority className="mb-3" />
-          <h1 className="mb-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
-            PIO Bataan - VE PMIS
-          </h1>
+          <Image
+            src="/logo.png"
+            alt="PIO Bataan - VE PMIS"
+            width={264}
+            height={99}
+            priority
+            className="mb-4"
+          />
           <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
             Track editing tasks, due dates, and performance.
           </p>

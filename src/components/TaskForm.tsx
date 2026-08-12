@@ -53,6 +53,7 @@ export function TaskForm({
       assigned_to: task?.assigned_to ?? "",
       output_type_id: task?.output_type_id ?? "",
       writer_id: task?.writer_id ?? "",
+      output_link: task?.output_link ?? "",
     },
   });
 
@@ -67,6 +68,7 @@ export function TaskForm({
     formData.set("assigned_to", values.assigned_to ?? "");
     formData.set("output_type_id", values.output_type_id ?? "");
     formData.set("writer_id", values.writer_id ?? "");
+    formData.set("output_link", values.output_link ?? "");
     startTransition(() => {
       onSubmit(formData);
     });
@@ -149,6 +151,15 @@ export function TaskForm({
             </option>
           ))}
         </select>
+      </Field>
+
+      <Field label="Output Link" error={errors.output_link?.message}>
+        <input
+          type="url"
+          placeholder="https://drive.google.com/..."
+          {...register("output_link")}
+          className="form-input"
+        />
       </Field>
 
       <button

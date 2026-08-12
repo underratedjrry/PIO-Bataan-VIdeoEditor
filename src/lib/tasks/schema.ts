@@ -12,6 +12,7 @@ export const taskFormSchema = z.object({
   assigned_to: z.string().uuid().optional().or(z.literal("")),
   output_type_id: z.string().uuid().optional().or(z.literal("")),
   writer_id: z.string().uuid().optional().or(z.literal("")),
+  output_link: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 });
 
 export type TaskFormValues = z.infer<typeof taskFormSchema>;

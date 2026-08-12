@@ -28,6 +28,7 @@ function parseTaskForm(formData: FormData) {
     assigned_to: String(formData.get("assigned_to") ?? ""),
     output_type_id: String(formData.get("output_type_id") ?? ""),
     writer_id: String(formData.get("writer_id") ?? ""),
+    output_link: String(formData.get("output_link") ?? ""),
   });
 }
 
@@ -47,6 +48,7 @@ export async function createTask(formData: FormData) {
       assigned_to: values.assigned_to || null,
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
+      output_link: values.output_link || null,
       created_by: user.id,
     })
     .select()
@@ -101,6 +103,7 @@ export async function updateTask(taskId: string, formData: FormData) {
       assigned_to: values.assigned_to || null,
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
+      output_link: values.output_link || null,
     })
     .eq("id", taskId)
     .select()

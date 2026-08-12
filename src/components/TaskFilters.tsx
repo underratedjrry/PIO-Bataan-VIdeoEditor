@@ -9,6 +9,7 @@ import {
   STATUSES,
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
+import { PAGE_SIZE_OPTIONS } from "@/lib/tasks/query";
 import type { OutputType } from "@/types/database";
 
 const SORT_OPTIONS = [
@@ -27,16 +28,19 @@ export function TaskFilters({ outputTypes }: { outputTypes: OutputType[] }) {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
+    params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
   }
 
   function toggleDir() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("dir", params.get("dir") === "desc" ? "asc" : "desc");
+    params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
   }
 
   const dir = searchParams.get("dir") === "desc" ? "desc" : "asc";
+  const pageSize = searchParams.get("pageSize") ?? "25";
   const exportHref = `/api/tasks/export?${searchParams.toString()}`;
 
   return (
@@ -73,6 +77,12 @@ export function TaskFilters({ outputTypes }: { outputTypes: OutputType[] }) {
         value={searchParams.get("sort") ?? "due_date"}
         onChange={(v) => update("sort", v)}
         options={SORT_OPTIONS}
+      />
+      <FilterSelect
+        label="Per page"
+        value={pageSize}
+        onChange={(v) => update("pageSize", v)}
+        options={PAGE_SIZE_OPTIONS.map((size) => ({ value: String(size), label: String(size) }))}
       />
       <button
         type="button"

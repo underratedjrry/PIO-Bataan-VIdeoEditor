@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { login } from "../actions";
+import { PasswordField } from "@/components/PasswordField";
 
 export default async function LoginPage({
   searchParams,
@@ -19,6 +20,7 @@ export default async function LoginPage({
             id="email"
             name="email"
             type="email"
+            autoComplete="email"
             required
             className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
@@ -27,13 +29,7 @@ export default async function LoginPage({
           <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Password
           </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
-          />
+          <PasswordField id="password" name="password" autoComplete="current-password" />
         </div>
 
         {message && (

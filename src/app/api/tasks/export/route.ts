@@ -23,12 +23,13 @@ export async function GET(request: NextRequest) {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams.entries());
   const filters = parseTaskFilters(searchParams);
 
-  const [tasks, { data: profiles }, { data: outputTypes }, { data: writers }] = await Promise.all([
-    fetchFilteredTasks(supabase, filters),
-    supabase.from("profiles").select("*"),
-    supabase.from("output_types").select("*"),
-    supabase.from("writers").select("*"),
-  ]);
+  const [{ tasks }, { data: profiles }, { data: outputTypes }, { data: writers }] =
+    await Promise.all([
+      fetchFilteredTasks(supabase, filters, { paginate: false }),
+      supabase.from("profiles").select("*"),
+      supabase.from("output_types").select("*"),
+      supabase.from("writers").select("*"),
+    ]);
   const latestCheckByTaskId = await fetchLatestChecksByTaskId(
     supabase,
     tasks.map((t) => t.id),
@@ -52,6 +53,7 @@ export async function GET(request: NextRequest) {
     due_date: task.due_date ? new Date(task.due_date).toISOString() : "",
     assignee: task.assigned_to ? (profilesById[task.assigned_to]?.full_name ?? "") : "",
     writer: task.writer_id ? (writersById[task.writer_id]?.name ?? "") : "",
+    output_link: task.output_link ?? "",
     latest_check_status: latestCheckByTaskId[task.id]
       ? CHECK_STATUS_LABELS[latestCheckByTaskId[task.id].status]
       : "",
@@ -68,6 +70,7 @@ export async function GET(request: NextRequest) {
     { key: "due_date", header: "Due Date" },
     { key: "assignee", header: "Assignee" },
     { key: "writer", header: "Writer" },
+    { key: "output_link", header: "Output Link" },
     { key: "latest_check_status", header: "Latest Check Status" },
     { key: "created_at", header: "Created At" },
   ]);

@@ -1,14 +1,15 @@
+import { Modal } from "@/components/Modal";
 import { TaskDetailContent } from "@/components/TaskDetailContent";
 
-export default async function TaskDetailPage({
+export default async function TaskModal({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   return (
-    <div className="mx-auto max-w-3xl">
+    <Modal>
       <TaskDetailContent id={id} />
-    </div>
+    </Modal>
   );
 }
