@@ -7,10 +7,14 @@ import {
   CHECK_STATUSES,
   CHECK_STATUS_LABELS,
 } from "@/lib/tasks/constants";
+import { runWithToast } from "@/lib/toast-action";
+import type { Writer } from "@/types/database";
 
 export function AddTaskCheckForm({
+  writers,
   onAdd,
 }: {
+  writers: Writer[];
   onAdd: (formData: FormData) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
@@ -32,12 +36,25 @@ export function AddTaskCheckForm({
     <form
       action={(formData: FormData) => {
         startTransition(async () => {
-          await onAdd(formData);
-          setOpen(false);
+          const ok = await runWithToast(() => onAdd(formData), "Check logged.");
+          if (ok) setOpen(false);
         });
       }}
       className="flex flex-col gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800"
     >
+      <label className="flex flex-col gap-1 text-sm">
+        <span className="font-medium text-slate-700 dark:text-slate-300">Checked by</span>
+        <select name="checked_by_writer_id" required defaultValue="" className="form-input">
+          <option value="" disabled>
+            Select a writer
+          </option>
+          {writers.map((w) => (
+            <option key={w.id} value={w.id}>
+              {w.name}
+            </option>
+          ))}
+        </select>
+      </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1 text-sm">
           <span className="font-medium text-slate-700 dark:text-slate-300">Checking stage</span>

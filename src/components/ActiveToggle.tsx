@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { runWithToast } from "@/lib/toast-action";
 
 export function ActiveToggle({
   id,
@@ -19,7 +20,7 @@ export function ActiveToggle({
       disabled={isPending}
       onClick={() => {
         startTransition(() => {
-          onToggle(id, !isActive);
+          runWithToast(() => onToggle(id, !isActive), isActive ? "Deactivated." : "Activated.");
         });
       }}
       className={`rounded-full px-2.5 py-1 text-xs font-medium disabled:opacity-60 ${

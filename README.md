@@ -3,7 +3,8 @@
 Project management for video editing tasks: create/track tasks by segment,
 output type, priority, and due date; email notifications; CSV export;
 data-driven performance insights; editorial approval workflow (Checked By);
-and Admin/Editor/Viewer roles.
+a per-editor performance dashboard; an AI Assist chat page; and
+Admin/Editor/Viewer roles.
 
 ## Stack
 
@@ -11,13 +12,15 @@ and Admin/Editor/Viewer roles.
 - Supabase (Postgres, Auth, Row-Level Security)
 - Resend (email notifications)
 - Vercel Cron (daily due/overdue digest)
+- Anthropic Claude API (AI Assist chat page only - optional)
 
 ## 1. Create the Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. In the SQL Editor, run these migrations **in order**:
-   `supabase/migrations/0001_init.sql`, `0002_editorial_workflow.sql`,
-   `0003_user_management.sql`, then `0004_output_link.sql`. Together these
+   `0001_init.sql`, `0002_editorial_workflow.sql`, `0003_user_management.sql`,
+   `0004_output_link.sql`, `0005_checked_by_writer.sql`, then
+   `0006_task_timing.sql` (all under `supabase/migrations/`). Together these
    create all tables, RLS policies, seed data (default Output Types), and a
    trigger that auto-provisions a `profiles` row on signup - **the first
    user to sign up becomes `admin`**, everyone after that defaults to
@@ -39,7 +42,13 @@ and Admin/Editor/Viewer roles.
 4. Email is optional - if you skip `RESEND_API_KEY`, the app still works,
    it just logs a warning instead of sending.
 
-## 3. Configure environment variables
+## 3. (Optional) Get an Anthropic API key
+
+Only needed for the **AI Assist** chat page. Create a key at
+[console.anthropic.com](https://console.anthropic.com). Without it, the page
+still loads but replies with a message saying the feature is unavailable.
+
+## 4. Configure environment variables
 
 Copy `.env.example` to `.env.local` and fill in every value:
 
@@ -49,7 +58,7 @@ cp .env.example .env.local
 
 `CRON_SECRET` can be anything random, e.g. `openssl rand -hex 32`.
 
-## 4. Run locally
+## 5. Run locally
 
 ```bash
 npm install
@@ -59,7 +68,7 @@ npm run dev
 Visit [http://localhost:3000](http://localhost:3000), sign up (first
 account becomes admin), and start creating tasks.
 
-## 5. Deploy to Vercel
+## 6. Deploy to Vercel
 
 1. Push this repo to GitHub and import it in Vercel.
 2. Add all the variables from `.env.example` as Vercel Environment
@@ -87,8 +96,10 @@ and hidden/disabled in the UI for the current role.
 
 ## Settings (`/settings`, admin-only)
 
-- **Users** - edit a user's display name, change their role, or delete
-  their account outright (revokes their Supabase Auth login; tasks they
+- **Users** - add a new user account directly (no self-signup needed;
+  creates a real Supabase Auth login with a temporary password), view full
+  details/edit a user's display name/change their role/delete their account
+  outright in a modal (revokes their Supabase Auth login; tasks they
   created or were assigned keep existing, just with no creator/assignee).
 - **Output Types** and **Writers** - admin-managed lookup lists with full
   create/rename/deactivate/delete. Active entries show up in the task
@@ -100,7 +111,26 @@ and hidden/disabled in the UI for the current role.
 **Checked By** on a task's detail page is an append-only approval log
 (Draft Checking / Revision Checking / Final Approval, each with a status of
 For Revision / Approved / Disapproved and optional remarks). Admins and
-editors can add entries; nothing can be edited or deleted once logged.
+editors can add entries, picking who's credited as the checker from a
+**Writer** dropdown (not necessarily the person who's logged in - who
+actually submitted the entry is still recorded in the task's Activity feed).
+Nothing can be edited or deleted once logged.
+
+## Video Editors page (`/editors`)
+
+Cards per editor/admin user showing total assigned tasks, a
+completed/ongoing/upcoming breakdown, completion rate, and average editing
+duration. Duration is measured from `started_editing_at` (set the first time
+a task moves to In Progress) to `completed_at` (set the first time it moves
+to Done) - both tracked separately from `created_at`/`updated_at` so the
+number reflects actual editing time, not time since the record was made or
+last touched.
+
+## AI Assist (`/ai-assist`)
+
+A simple chat page backed by the Claude API (see step 3 above) for drafting
+task descriptions, captions, summaries, etc. Conversation history is
+in-memory only (not persisted) - refreshing the page starts a new chat.
 
 ## Notes
 
@@ -121,3 +151,12 @@ editors can add entries; nothing can be edited or deleted once logged.
   via "Regenerate insights".
 - The daily cron dedupes against `notification_log` so re-runs within the
   same ~20 hours won't re-send the same due/overdue email for a task.
+- The sidebar collapses into a hamburger-triggered drawer below the `md`
+  breakpoint; the desktop layout is unchanged. The footer shows an
+  online/offline indicator (`navigator.onLine` + the `online`/`offline`
+  window events), and a blocking "Connection to server lost" modal appears
+  app-wide whenever the browser goes offline, clearing itself once back online.
+- Toast notifications (via `sonner`) confirm success/failure on most
+  mutations; actions that `redirect()` on success (create/update/delete
+  task) tag the destination URL with `?toast=...` since a toast can't fire
+  before the navigation happens - see `src/components/ToastFromSearchParams.tsx`.

@@ -12,6 +12,7 @@ import {
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
 import { taskFormSchema, type TaskFormValues } from "@/lib/tasks/schema";
+import { runWithToast } from "@/lib/toast-action";
 import type { OutputType, Profile, Task, Writer } from "@/types/database";
 
 function toDatetimeLocal(value: string | null | undefined) {
@@ -70,7 +71,7 @@ export function TaskForm({
     formData.set("writer_id", values.writer_id ?? "");
     formData.set("output_link", values.output_link ?? "");
     startTransition(() => {
-      onSubmit(formData);
+      runWithToast(() => onSubmit(formData));
     });
   }
 

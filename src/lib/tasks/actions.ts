@@ -17,6 +17,26 @@ async function requireUser() {
   return { supabase, user };
 }
 
+// Sets started_editing_at / completed_at the first time a task reaches
+// in_progress / done respectively, so later editing-duration calculations
+// use real start/finish points instead of created_at/updated_at (which
+// change on any edit, not just these transitions).
+function statusTimingFields(
+  existing: Pick<Task, "started_editing_at" | "completed_at">,
+  nextStatus: Status,
+): Partial<Pick<Task, "started_editing_at" | "completed_at">> {
+  const fields: Partial<Pick<Task, "started_editing_at" | "completed_at">> = {};
+  const now = new Date().toISOString();
+
+  if (nextStatus === "in_progress" && !existing.started_editing_at) {
+    fields.started_editing_at = now;
+  }
+  if (nextStatus === "done" && !existing.completed_at) {
+    fields.completed_at = now;
+  }
+  return fields;
+}
+
 function parseTaskForm(formData: FormData) {
   return taskFormSchema.parse({
     title: String(formData.get("title") ?? ""),
@@ -76,7 +96,7 @@ export async function createTask(formData: FormData) {
   }
 
   revalidatePath("/tasks");
-  redirect(`/tasks/${task.id}`);
+  redirect(`/tasks/${task.id}?toast=task-created`);
 }
 
 export async function updateTask(taskId: string, formData: FormData) {
@@ -104,6 +124,7 @@ export async function updateTask(taskId: string, formData: FormData) {
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
       output_link: values.output_link || null,
+      ...statusTimingFields(existing, values.status),
     })
     .eq("id", taskId)
     .select()
@@ -157,7 +178,7 @@ export async function updateTask(taskId: string, formData: FormData) {
 
   revalidatePath("/tasks");
   revalidatePath(`/tasks/${taskId}`);
-  redirect(`/tasks/${taskId}`);
+  redirect(`/tasks/${taskId}?toast=task-updated`);
 }
 
 export async function deleteTask(taskId: string) {
@@ -165,7 +186,7 @@ export async function deleteTask(taskId: string) {
   const { error } = await supabase.from("tasks").delete().eq("id", taskId);
   if (error) throw new Error(error.message);
   revalidatePath("/tasks");
-  redirect("/tasks");
+  redirect("/tasks?toast=task-deleted");
 }
 
 export async function setTaskStatus(taskId: string, status: Status) {
@@ -177,7 +198,10 @@ export async function setTaskStatus(taskId: string, status: Status) {
     .single();
   if (!existing) throw new Error("Task not found");
 
-  const { error } = await supabase.from("tasks").update({ status }).eq("id", taskId);
+  const { error } = await supabase
+    .from("tasks")
+    .update({ status, ...statusTimingFields(existing, status) })
+    .eq("id", taskId);
   if (error) throw new Error(error.message);
 
   await supabase.from("task_activity").insert({
@@ -204,6 +228,7 @@ export async function addTaskCheck(taskId: string, formData: FormData) {
   }
 
   const values = taskCheckFormSchema.parse({
+    checked_by_writer_id: String(formData.get("checked_by_writer_id") ?? ""),
     stage: String(formData.get("stage") ?? "draft_checking"),
     status: String(formData.get("status") ?? "for_revision"),
     remarks: String(formData.get("remarks") ?? ""),
@@ -211,7 +236,7 @@ export async function addTaskCheck(taskId: string, formData: FormData) {
 
   const { error } = await supabase.from("task_checks").insert({
     task_id: taskId,
-    checked_by: user.id,
+    checked_by_writer_id: values.checked_by_writer_id,
     stage: values.stage,
     status: values.status,
     remarks: values.remarks || null,

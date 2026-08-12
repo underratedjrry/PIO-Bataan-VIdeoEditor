@@ -54,6 +54,7 @@ export default async function TasksPage({
         profilesById={profilesById}
         outputTypesById={outputTypesById}
         latestCheckByTaskId={latestCheckByTaskId}
+        currentUser={{ id: profile.id, role: profile.role }}
         canEditStatus={canEditStatus}
       />
       <Pagination page={filters.page} pageSize={filters.pageSize} totalCount={totalCount} />

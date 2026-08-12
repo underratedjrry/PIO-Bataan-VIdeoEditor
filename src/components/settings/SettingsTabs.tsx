@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import type { OutputType, Profile, Writer } from "@/types/database";
 import { UserRow } from "./UserRow";
+import { UserModal } from "./UserModal";
+import { AddUserForm } from "./AddUserForm";
 import { LookupRow } from "./LookupRow";
+import { runWithToast } from "@/lib/toast-action";
 import {
   createOutputType,
   createWriter,
@@ -14,7 +17,6 @@ import {
   toggleOutputType,
   toggleWriter,
 } from "@/lib/lookups/actions";
-import { deleteUserAccount, updateUserName } from "@/lib/admin/actions";
 
 const TABS = [
   { key: "users", label: "Users" },
@@ -36,6 +38,7 @@ export function SettingsTabs({
   currentUserId: string;
 }) {
   const [tab, setTab] = useState<TabKey>("users");
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 
   return (
     <div className="flex flex-col gap-6">
@@ -57,31 +60,31 @@ export function SettingsTabs({
       </div>
 
       {tab === "users" && (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
-          <table className="w-full min-w-[560px] text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {profiles.map((p) => (
-                <UserRow
-                  key={p.id}
-                  id={p.id}
-                  fullName={p.full_name}
-                  email={p.email}
-                  role={p.role}
-                  isSelf={p.id === currentUserId}
-                  onRename={updateUserName}
-                  onDelete={deleteUserAccount}
-                />
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-col gap-4">
+          <AddUserForm />
+          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+            <table className="w-full min-w-[560px] text-left text-sm">
+              <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+                <tr>
+                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Email</th>
+                  <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {profiles.map((p) => (
+                  <UserRow
+                    key={p.id}
+                    fullName={p.full_name}
+                    email={p.email}
+                    role={p.role}
+                    onView={() => setSelectedUser(p)}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -106,6 +109,14 @@ export function SettingsTabs({
           onDelete={deleteWriter}
         />
       )}
+
+      {selectedUser && (
+        <UserModal
+          user={selectedUser}
+          isSelf={selectedUser.id === currentUserId}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 }
@@ -125,9 +136,18 @@ function LookupSection({
   onToggle: (id: string, next: boolean) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }) {
+  const [isPending, startTransition] = useTransition();
+
   return (
     <div className="flex flex-col gap-4">
-      <form action={onCreate} className="flex max-w-md gap-2">
+      <form
+        action={(formData: FormData) => {
+          startTransition(() => {
+            runWithToast(() => onCreate(formData), "Added.");
+          });
+        }}
+        className="flex max-w-md gap-2"
+      >
         <input
           name="name"
           placeholder={`Add a new ${itemLabel}`}
@@ -136,7 +156,8 @@ function LookupSection({
         />
         <button
           type="submit"
-          className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
+          disabled={isPending}
+          className="rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5] disabled:opacity-60"
         >
           Add
         </button>

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { ActiveToggle } from "@/components/ActiveToggle";
+import { runWithToast } from "@/lib/toast-action";
 
 export function LookupRow({
   id,
@@ -40,8 +41,8 @@ export function LookupRow({
               disabled={isPending}
               onClick={() =>
                 startTransition(async () => {
-                  await onRename(id, value);
-                  setEditing(false);
+                  const ok = await runWithToast(() => onRename(id, value), "Renamed.");
+                  if (ok) setEditing(false);
                 })
               }
               className="rounded-md bg-[#1565D8] px-2.5 py-1 text-xs font-medium text-white hover:bg-[#0F52B5]"
@@ -81,7 +82,9 @@ export function LookupRow({
               disabled={isPending}
               onClick={() => {
                 if (confirm(`Delete "${name}"? Tasks using it will just show no ${itemLabel}.`)) {
-                  startTransition(() => onDelete(id));
+                  startTransition(() => {
+                    runWithToast(() => onDelete(id), "Deleted.");
+                  });
                 }
               }}
               className="text-xs font-medium text-red-600 dark:text-red-400"

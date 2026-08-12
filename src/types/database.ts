@@ -47,6 +47,8 @@ export type Task = {
   output_type_id: string | null;
   writer_id: string | null;
   output_link: string | null;
+  started_editing_at: string | null;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -68,7 +70,7 @@ export type Writer = {
 export type TaskCheck = {
   id: string;
   task_id: string;
-  checked_by: string;
+  checked_by_writer_id: string;
   stage: CheckStage;
   status: CheckStatus;
   remarks: string | null;
@@ -153,7 +155,7 @@ export type Database = {
         Row: TaskCheck;
         Insert: Partial<TaskCheck> & {
           task_id: string;
-          checked_by: string;
+          checked_by_writer_id: string;
           stage: CheckStage;
           status: CheckStatus;
         };

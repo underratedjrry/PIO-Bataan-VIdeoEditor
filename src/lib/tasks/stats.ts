@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Task } from "@/types/database";
+import { taskDurationHours } from "./duration";
 import type { PerformanceStats } from "./narrative";
 
 export async function computePerformanceStats(
@@ -22,11 +23,8 @@ export async function computePerformanceStats(
   ).length;
 
   const turnaroundHours = completed
-    .map(
-      (t) =>
-        (new Date(t.updated_at).getTime() - new Date(t.created_at).getTime()) / 3_600_000,
-    )
-    .filter((hours) => hours >= 0);
+    .map(taskDurationHours)
+    .filter((hours): hours is number => hours !== null);
 
   const byPriority: Record<string, number> = {};
   const bySegment: Record<string, number> = {};

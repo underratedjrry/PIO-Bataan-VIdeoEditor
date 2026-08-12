@@ -1,20 +1,25 @@
 import Link from "next/link";
-import type { OutputType, Profile, Task, TaskCheck } from "@/types/database";
+import type { OutputType, Profile, Role, Task, TaskCheck } from "@/types/database";
 import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS, SEGMENT_LABELS } from "@/lib/tasks/constants";
+import { deleteTask } from "@/lib/tasks/actions";
 import { Badge } from "./Badge";
 import { StatusSelect } from "./StatusSelect";
+import { DeleteTaskButton } from "./DeleteTaskButton";
+import { EyeIcon, PencilIcon } from "./icons";
 
 export function TaskTable({
   tasks,
   profilesById,
   outputTypesById,
   latestCheckByTaskId,
+  currentUser,
   canEditStatus,
 }: {
   tasks: Task[];
   profilesById: Record<string, Profile>;
   outputTypesById: Record<string, OutputType>;
   latestCheckByTaskId: Record<string, TaskCheck>;
+  currentUser: { id: string; role: Role };
   canEditStatus: boolean;
 }) {
   if (tasks.length === 0) {
@@ -33,7 +38,7 @@ export function TaskTable({
 
   return (
     <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
-      <table className="w-full min-w-[880px] text-left text-sm">
+      <table className="w-full min-w-[960px] text-left text-sm">
         <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
           <tr>
             <th className="px-4 py-3">Output Type</th>
@@ -43,6 +48,7 @@ export function TaskTable({
             <th className="px-4 py-3">Assignee</th>
             <th className="px-4 py-3">Latest Check</th>
             <th className="px-4 py-3">Status</th>
+            <th className="px-4 py-3">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -52,6 +58,14 @@ export function TaskTable({
               new Date(task.due_date).getTime() < now &&
               task.status !== "done";
             const latestCheck = latestCheckByTaskId[task.id];
+            const canEdit =
+              currentUser.role === "admin" ||
+              (currentUser.role === "editor" &&
+                (task.created_by === currentUser.id || task.assigned_to === currentUser.id));
+            const canDelete =
+              currentUser.role === "admin" ||
+              (currentUser.role === "editor" && task.created_by === currentUser.id);
+            const boundDelete = deleteTask.bind(null, task.id);
 
             return (
               <tr key={task.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
@@ -96,6 +110,29 @@ export function TaskTable({
                 </td>
                 <td className="px-4 py-3">
                   <StatusSelect taskId={task.id} status={task.status} disabled={!canEditStatus} />
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={`/tasks/${task.id}`}
+                      aria-label="View task"
+                      title="View"
+                      className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+                    >
+                      <EyeIcon className="h-4 w-4" />
+                    </Link>
+                    {canEdit && (
+                      <Link
+                        href={`/tasks/${task.id}`}
+                        aria-label="Edit task"
+                        title="Edit"
+                        className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </Link>
+                    )}
+                    {canDelete && <DeleteTaskButton onDelete={boundDelete} icon />}
+                  </div>
                 </td>
               </tr>
             );

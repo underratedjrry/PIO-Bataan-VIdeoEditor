@@ -106,7 +106,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium text-slate-900 dark:text-slate-100">
-                    {profilesById[check.checked_by]?.full_name ?? "Someone"}
+                    {writersById[check.checked_by_writer_id]?.name ?? "Unknown"}
                   </span>
                   <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                     {CHECK_STAGE_LABELS[check.stage]}
@@ -128,7 +128,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
             <li className="text-slate-400">No checks logged yet.</li>
           )}
         </ul>
-        {canCheck && <AddTaskCheckForm onAdd={boundAddCheck} />}
+        {canCheck && <AddTaskCheckForm writers={writers ?? []} onAdd={boundAddCheck} />}
       </div>
 
       <div>

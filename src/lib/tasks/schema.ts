@@ -18,6 +18,7 @@ export const taskFormSchema = z.object({
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
 
 export const taskCheckFormSchema = z.object({
+  checked_by_writer_id: z.string().uuid("Select who checked this"),
   stage: z.enum(CHECK_STAGES as [CheckStage, ...CheckStage[]]),
   status: z.enum(CHECK_STATUSES as [CheckStatus, ...CheckStatus[]]),
   remarks: z.string().max(2000).optional().or(z.literal("")),
