@@ -125,7 +125,7 @@ export function TaskTable({
                     </Link>
                     {canEdit && (
                       <Link
-                        href={`/tasks/${task.id}`}
+                        href={`/tasks/${task.id}?mode=edit`}
                         aria-label="Edit task"
                         title="Edit"
                         className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"

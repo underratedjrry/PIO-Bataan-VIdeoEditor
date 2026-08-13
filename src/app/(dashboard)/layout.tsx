@@ -14,6 +14,7 @@ export default async function DashboardLayout({
   const { profile } = await getCurrentProfile();
 
   const navItems = [
+    { href: "/dashboard", label: "Dashboard" },
     { href: "/insights", label: "Insights" },
     { href: "/tasks", label: "Tasks" },
     { href: "/editors", label: "Video Editors" },

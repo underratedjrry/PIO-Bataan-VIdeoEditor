@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentProfile } from "@/lib/supabase/profile";
 import { createClient } from "@/lib/supabase/server";
@@ -6,6 +7,7 @@ import { TaskForm } from "@/components/TaskForm";
 import { DeleteTaskButton } from "@/components/DeleteTaskButton";
 import { AddTaskCheckForm } from "@/components/AddTaskCheckForm";
 import { Badge } from "@/components/Badge";
+import { PencilIcon } from "@/components/icons";
 import {
   CHECK_STAGE_LABELS,
   CHECK_STATUS_BADGE_CLASSES,
@@ -16,7 +18,7 @@ import {
 } from "@/lib/tasks/constants";
 import type { OutputType, Profile, Segment, Task, Writer } from "@/types/database";
 
-export async function TaskDetailContent({ id }: { id: string }) {
+export async function TaskDetailContent({ id, mode }: { id: string; mode?: string }) {
   const { profile } = await getCurrentProfile();
   const supabase = await createClient();
 
@@ -65,6 +67,7 @@ export async function TaskDetailContent({ id }: { id: string }) {
     profile.role === "admin" ||
     (profile.role === "editor" && task.created_by === profile.id);
   const canCheck = profile.role === "admin" || profile.role === "editor";
+  const showForm = canEdit && mode === "edit";
 
   const boundUpdate = updateTask.bind(null, task.id);
   const boundDelete = deleteTask.bind(null, task.id);
@@ -74,10 +77,22 @@ export async function TaskDetailContent({ id }: { id: string }) {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{task.title}</h1>
-        {canDelete && <DeleteTaskButton onDelete={boundDelete} />}
+        <div className="flex items-center gap-3">
+          {canEdit && !showForm && (
+            <Link
+              href={`/tasks/${task.id}?mode=edit`}
+              aria-label="Edit task"
+              title="Edit"
+              className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+            >
+              <PencilIcon className="h-4 w-4" />
+            </Link>
+          )}
+          {canDelete && <DeleteTaskButton onDelete={boundDelete} />}
+        </div>
       </div>
 
-      {canEdit ? (
+      {showForm ? (
         <TaskForm
           task={task}
           profiles={profiles ?? []}

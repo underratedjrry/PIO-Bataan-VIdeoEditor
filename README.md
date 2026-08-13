@@ -3,8 +3,8 @@
 Project management for video editing tasks: create/track tasks by segment,
 output type, priority, and due date; email notifications; CSV export;
 data-driven performance insights; editorial approval workflow (Checked By);
-a per-editor performance dashboard; an AI Assist chat page; and
-Admin/Editor/Viewer roles.
+a per-editor performance dashboard; a calendar Dashboard of deliverables by
+due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
 
 ## Stack
 
@@ -147,6 +147,13 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
 - Clicking a task in the list opens it in a modal (view/edit/delete, plus
   Checked By) via a Next.js intercepting route - the same URL
   (`/tasks/[id]`) also works as a normal full page on direct load/refresh.
+  It opens **read-only** by default (Output Link renders as a clickable
+  link) - the pencil icon or `?mode=edit` switches it into the editable
+  form.
+- **Dashboard** (`/dashboard`) is a month calendar of all tasks by due
+  date (a booking-calendar style view, not scoped to the signed-in user).
+  Clicking a date with tasks opens a modal listing them, each linking into
+  the normal task view.
 - Tasks can carry an **Output Link** (a pasted URL to the finished
   deliverable), shown on the task detail view/CSV export.
 - The Insights page computes each signed-in user's own performance
