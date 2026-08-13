@@ -7,11 +7,18 @@
  * 2. Delete any starter code and paste this whole file in.
  * 3. Set SHARED_SECRET below to a random string (must match
  *    GOOGLE_SHEETS_WEBHOOK_SECRET in the app's Vercel env vars).
- * 4. Deploy > New deployment > type "Web app".
+ * 4. Authorize the script BEFORE deploying: in the toolbar, pick
+ *    "testAuth" from the function dropdown (next to the Run button) and
+ *    click Run. A permissions dialog will appear - choose your account,
+ *    click "Advanced" -> "Go to ... (unsafe)" (this warning is normal for
+ *    a script you wrote yourself), then Allow. Deploying without doing
+ *    this first is the most common cause of a permission error at the
+ *    deploy step.
+ * 5. Deploy > New deployment > type "Web app".
  *      - Execute as: Me
  *      - Who has access: Anyone
  *    Copy the resulting Web app URL into GOOGLE_SHEETS_WEBHOOK_URL.
- * 5. Whenever you edit this script, you must create a new deployment
+ * 6. Whenever you edit this script, you must create a new deployment
  *    version (Deploy > Manage deployments > edit > New version) for the
  *    change to take effect - saving alone isn't enough.
  *
@@ -28,6 +35,14 @@ var SHARED_SECRET = "REPLACE_WITH_A_RANDOM_SECRET";
 var TIME_ZONE = "Asia/Manila";
 var MONTH_HEADER_PATTERN = /^[A-Z]+,\s*\d{4}$/;
 var HEADER_ROW_VALUES = ["DATE", "WHAT HAS TRANSPIRED", "PPA (IPCR_CODE)", "EMPLOYEE_NO", "REFERENCE", "REMARKS"];
+
+// Run this once from the editor (Run button, with this selected in the
+// function dropdown) to trigger the permissions prompt before your first
+// deployment - see step 4 above.
+function testAuth() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  Logger.log("Access OK: " + ss.getName());
+}
 
 function doPost(e) {
   var result;
