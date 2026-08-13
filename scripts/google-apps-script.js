@@ -22,19 +22,20 @@
  *    version (Deploy > Manage deployments > edit > New version) for the
  *    change to take effect - saving alone isn't enough.
  *
- * What it does: given a target tab name, a date, and a line of text, finds
- * that date's month section on that tab (matching a "MONTH, YEAR" header in
- * column A, e.g. "AUGUST, 2026") and fills the next empty row there with
- * the date (column A) and text (column B). If the month section doesn't
- * exist yet, it's created at the bottom of the tab in the same style as the
- * existing ones.
+ * What it does: given a target tab name, a date, and a line of text, writes
+ * them into the row right after the last used row on that tab (column A =
+ * date, column B = text) - i.e. if row 35 is the last row with content, the
+ * new entry goes into row 36. This doesn't try to find/organize by month
+ * section - it just appends at the true end of the tab. Simpler and more
+ * reliable than matching "MONTH, YEAR" headers, at the cost of not
+ * auto-sorting entries into pre-built month blocks; if a new month's
+ * entries land past the last existing block, add that month's header row
+ * manually and future syncs will keep appending after it.
  */
 
 var SPREADSHEET_ID = "1x8Nl6RkVMr2YJPL3G0O_4IUrfn8hYJYbZoDNZhLguD4";
 var SHARED_SECRET = "REPLACE_WITH_A_RANDOM_SECRET";
 var TIME_ZONE = "Asia/Manila";
-var MONTH_HEADER_PATTERN = /^[A-Z]+,\s*\d{4}$/;
-var HEADER_ROW_VALUES = ["DATE", "WHAT HAS TRANSPIRED", "PPA (IPCR_CODE)", "EMPLOYEE_NO", "REFERENCE", "REMARKS"];
 
 // Run this once from the editor (Run button, with this selected in the
 // function dropdown) to trigger the permissions prompt before your first
@@ -69,77 +70,11 @@ function handleSync(body) {
   }
 
   var dateObj = new Date(body.date);
-  var monthLabel = Utilities.formatDate(dateObj, TIME_ZONE, "MMMM, yyyy").toUpperCase();
   var dateLabel = Utilities.formatDate(dateObj, TIME_ZONE, "MMMM d, yyyy");
 
-  var data = sheet.getDataRange().getValues();
-  var monthHeaderRow = -1; // 0-indexed
-  var nextHeaderRow = -1;
-
-  for (var i = 0; i < data.length; i++) {
-    var cellA = String(data[i][0]).trim().toUpperCase();
-    if (monthHeaderRow === -1 && cellA === monthLabel) {
-      monthHeaderRow = i;
-    } else if (monthHeaderRow !== -1 && i > monthHeaderRow && MONTH_HEADER_PATTERN.test(cellA)) {
-      nextHeaderRow = i;
-      break;
-    }
-  }
-
-  if (monthHeaderRow === -1) {
-    return appendNewMonthSection(sheet, monthLabel, dateLabel, body.text);
-  }
-
-  var searchStart = monthHeaderRow + 2; // skip month bar + column-title row
-  var searchEnd = nextHeaderRow === -1 ? data.length : nextHeaderRow;
-  var targetIndex = -1;
-  for (var r = searchStart; r < searchEnd; r++) {
-    if (!data[r] || !data[r][0]) {
-      targetIndex = r;
-      break;
-    }
-  }
-
-  var targetRow;
-  if (targetIndex === -1) {
-    // Section is full - insert a fresh row right before the next header
-    // (or at the end of the sheet if this was the last month present).
-    targetRow = (nextHeaderRow === -1 ? data.length : nextHeaderRow) + 1; // 1-indexed
-    sheet.insertRowBefore(targetRow);
-  } else {
-    targetRow = targetIndex + 1; // 1-indexed
-  }
-
+  var targetRow = sheet.getLastRow() + 1;
   sheet.getRange(targetRow, 1).setValue(dateLabel);
   sheet.getRange(targetRow, 2).setValue(body.text);
-  return { ok: true, row: targetRow, section: "existing" };
-}
 
-function appendNewMonthSection(sheet, monthLabel, dateLabel, text) {
-  var lastRow = sheet.getLastRow();
-  var headerBarRow = lastRow > 0 ? lastRow + 2 : 1;
-  var columnRow = headerBarRow + 1;
-  var dataRow = columnRow + 1;
-
-  sheet
-    .getRange(headerBarRow, 1, 1, HEADER_ROW_VALUES.length)
-    .merge()
-    .setValue(monthLabel)
-    .setBackground("#990000")
-    .setFontColor("#ffffff")
-    .setFontWeight("bold")
-    .setHorizontalAlignment("center");
-
-  sheet
-    .getRange(columnRow, 1, 1, HEADER_ROW_VALUES.length)
-    .setValues([HEADER_ROW_VALUES])
-    .setBackground("#1155cc")
-    .setFontColor("#ffffff")
-    .setFontWeight("bold")
-    .setHorizontalAlignment("center");
-
-  sheet.getRange(dataRow, 1).setValue(dateLabel);
-  sheet.getRange(dataRow, 2).setValue(text);
-
-  return { ok: true, row: dataRow, section: "new" };
+  return { ok: true, row: targetRow };
 }
