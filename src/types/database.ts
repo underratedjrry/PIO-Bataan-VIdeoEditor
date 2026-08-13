@@ -46,6 +46,7 @@ export type OutputType = {
   id: string;
   name: string;
   is_active: boolean;
+  color: string;
   created_at: string;
 };
 
@@ -53,6 +54,7 @@ export type Segment = {
   id: string;
   name: string;
   is_active: boolean;
+  color: string;
   created_at: string;
 };
 

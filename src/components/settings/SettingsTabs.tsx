@@ -17,6 +17,8 @@ import {
   renameOutputType,
   renameSegment,
   renameWriter,
+  setOutputTypeColor,
+  setSegmentColor,
   toggleOutputType,
   toggleSegment,
   toggleWriter,
@@ -104,6 +106,7 @@ export function SettingsTabs({
           onRename={renameSegment}
           onToggle={toggleSegment}
           onDelete={deleteSegment}
+          onSetColor={setSegmentColor}
         />
       )}
 
@@ -115,6 +118,7 @@ export function SettingsTabs({
           onRename={renameOutputType}
           onToggle={toggleOutputType}
           onDelete={deleteOutputType}
+          onSetColor={setOutputTypeColor}
         />
       )}
 
@@ -147,6 +151,7 @@ function LookupSection({
   onRename,
   onToggle,
   onDelete,
+  onSetColor,
 }: {
   items: (OutputType | Writer | Segment)[];
   itemLabel: string;
@@ -154,6 +159,7 @@ function LookupSection({
   onRename: (id: string, name: string) => Promise<void>;
   onToggle: (id: string, next: boolean) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onSetColor?: (id: string, color: string) => Promise<void>;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -189,6 +195,7 @@ function LookupSection({
           <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
             <tr>
               <th className="px-4 py-3">Name</th>
+              {onSetColor && <th className="px-4 py-3">Color</th>}
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Actions</th>
             </tr>
@@ -200,6 +207,8 @@ function LookupSection({
                 id={item.id}
                 name={item.name}
                 isActive={item.is_active}
+                color={"color" in item ? item.color : undefined}
+                onSetColor={onSetColor}
                 itemLabel={itemLabel}
                 onRename={onRename}
                 onToggle={onToggle}
@@ -208,7 +217,7 @@ function LookupSection({
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={onSetColor ? 4 : 3} className="px-4 py-6 text-center text-slate-400">
                   No {itemLabel}s yet.
                 </td>
               </tr>

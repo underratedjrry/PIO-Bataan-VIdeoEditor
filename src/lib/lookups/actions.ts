@@ -46,6 +46,14 @@ export async function renameOutputType(id: string, name: string) {
   revalidatePath("/settings");
 }
 
+export async function setOutputTypeColor(id: string, color: string) {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("output_types").update({ color }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/settings");
+}
+
 export async function toggleOutputType(id: string, isActive: boolean) {
   const { supabase } = await requireAdmin();
   const { error } = await supabase
@@ -123,6 +131,14 @@ export async function renameSegment(id: string, name: string) {
   if (!trimmed) throw new Error("Name is required");
 
   const { error } = await supabase.from("segments").update({ name: trimmed }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/settings");
+}
+
+export async function setSegmentColor(id: string, color: string) {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("segments").update({ color }).eq("id", id);
   if (error) throw new Error(error.message);
 
   revalidatePath("/settings");

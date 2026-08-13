@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { ActiveToggle } from "@/components/ActiveToggle";
+import { ColorSwatchPicker } from "@/components/settings/ColorSwatchPicker";
 import { runWithToast } from "@/lib/toast-action";
 import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "@/components/icons";
 
@@ -9,6 +10,8 @@ export function LookupRow({
   id,
   name,
   isActive,
+  color,
+  onSetColor,
   itemLabel,
   onRename,
   onToggle,
@@ -17,6 +20,8 @@ export function LookupRow({
   id: string;
   name: string;
   isActive: boolean;
+  color?: string;
+  onSetColor?: (id: string, color: string) => Promise<void>;
   itemLabel: string;
   onRename: (id: string, name: string) => Promise<void>;
   onToggle: (id: string, next: boolean) => Promise<void>;
@@ -69,6 +74,11 @@ export function LookupRow({
           <span className="text-slate-900 dark:text-slate-100">{name}</span>
         )}
       </td>
+      {onSetColor && (
+        <td className="px-4 py-2">
+          <ColorSwatchPicker id={id} color={color ?? "slate"} onSetColor={onSetColor} />
+        </td>
+      )}
       <td className="px-4 py-2">
         <ActiveToggle id={id} isActive={isActive} onToggle={onToggle} />
       </td>

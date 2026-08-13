@@ -20,8 +20,9 @@ due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
 2. In the SQL Editor, run these migrations **in order**:
    `0001_init.sql`, `0002_editorial_workflow.sql`, `0003_user_management.sql`,
    `0004_output_link.sql`, `0005_checked_by_writer.sql`,
-   `0006_task_timing.sql`, then `0007_segments_lookup.sql` (all under
-   `supabase/migrations/`). Together these create all tables, RLS policies,
+   `0006_task_timing.sql`, `0007_segments_lookup.sql`, then
+   `0008_lookup_colors.sql` (all under `supabase/migrations/`). Together
+   these create all tables, RLS policies,
    seed data (default Output Types and Segments), and a trigger that
    auto-provisions a `profiles` row on signup - **the first user to sign up
    becomes `admin`**, everyone after that defaults to `editor`.
@@ -140,7 +141,9 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
   filters as whatever's on screen (across all pages, not just the current one).
 - **Segments** (like Output Types and Writers) are an admin-editable lookup
   managed from Settings, not a fixed list - add/rename/deactivate/delete from
-  the Settings > Segments tab.
+  the Settings > Segments tab. Segments and Output Types can each be assigned
+  a badge color from Settings (click the color dot next to an item), shown
+  wherever that task field is displayed (task view, task list).
 - A task's **Task created** date/time is an editable field on the task form
   (defaults to the current date/time for new tasks), so it can be backdated
   to when work actually started instead of when the record was entered.

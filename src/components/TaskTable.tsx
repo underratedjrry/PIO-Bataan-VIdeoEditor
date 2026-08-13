@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { OutputType, Profile, Role, Segment, Task, TaskCheck } from "@/types/database";
-import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS } from "@/lib/tasks/constants";
+import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS, LOOKUP_BADGE_CLASSES } from "@/lib/tasks/constants";
 import { deleteTask } from "@/lib/tasks/actions";
 import { Badge } from "./Badge";
 import { StatusSelect } from "./StatusSelect";
@@ -71,10 +71,19 @@ export function TaskTable({
 
             return (
               <tr key={task.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
-                  {task.output_type_id
-                    ? (outputTypesById[task.output_type_id]?.name ?? "-")
-                    : "-"}
+                <td className="px-4 py-3">
+                  {task.output_type_id && outputTypesById[task.output_type_id] ? (
+                    <Badge
+                      className={
+                        LOOKUP_BADGE_CLASSES[outputTypesById[task.output_type_id].color] ??
+                        LOOKUP_BADGE_CLASSES.slate
+                      }
+                    >
+                      {outputTypesById[task.output_type_id].name}
+                    </Badge>
+                  ) : (
+                    <span className="text-slate-400">-</span>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <Link
@@ -84,8 +93,19 @@ export function TaskTable({
                     {task.title}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
-                  {task.segment_id ? (segmentsById[task.segment_id]?.name ?? "-") : "-"}
+                <td className="px-4 py-3">
+                  {task.segment_id && segmentsById[task.segment_id] ? (
+                    <Badge
+                      className={
+                        LOOKUP_BADGE_CLASSES[segmentsById[task.segment_id].color] ??
+                        LOOKUP_BADGE_CLASSES.slate
+                      }
+                    >
+                      {segmentsById[task.segment_id].name}
+                    </Badge>
+                  ) : (
+                    <span className="text-slate-400">-</span>
+                  )}
                 </td>
                 <td
                   className={`px-4 py-3 ${

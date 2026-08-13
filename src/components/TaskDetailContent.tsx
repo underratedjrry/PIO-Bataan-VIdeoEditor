@@ -12,8 +12,10 @@ import {
   CHECK_STAGE_LABELS,
   CHECK_STATUS_BADGE_CLASSES,
   CHECK_STATUS_LABELS,
+  LOOKUP_BADGE_CLASSES,
   PRIORITY_BADGE_CLASSES,
   PRIORITY_LABELS,
+  STATUS_BADGE_CLASSES,
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
 import type { OutputType, Profile, Segment, Task, Writer } from "@/types/database";
@@ -201,15 +203,15 @@ function ReadOnlyTaskDetails({
           {PRIORITY_LABELS[task.priority]}
         </Badge>
         {segment && (
-          <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          <Badge className={LOOKUP_BADGE_CLASSES[segment.color] ?? LOOKUP_BADGE_CLASSES.slate}>
             {segment.name}
           </Badge>
         )}
-        <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+        <Badge className={STATUS_BADGE_CLASSES[task.status]}>
           {STATUS_LABELS[task.status]}
         </Badge>
         {outputType && (
-          <Badge className="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          <Badge className={LOOKUP_BADGE_CLASSES[outputType.color] ?? LOOKUP_BADGE_CLASSES.slate}>
             {outputType.name}
           </Badge>
         )}
