@@ -49,6 +49,29 @@ Only needed for the **AI Assist** chat page. Create a key at
 [console.anthropic.com](https://console.anthropic.com). Without it, the page
 still loads but replies with a message saying the feature is unavailable.
 
+## 3b. (Optional) Set up Google Sheets sync
+
+Automatically logs new tasks into the "PIO Daily Accomplishments" Google
+Sheet - only for tasks that already have a **start date** set at creation,
+one row per task, on the tab matching the assignee's (or creator's, if
+unassigned) full name.
+
+1. Open the target spreadsheet -> **Extensions > Apps Script**.
+2. Paste in the contents of `scripts/google-apps-script.js` (this repo),
+   replacing any starter code.
+3. Set `SHARED_SECRET` in that script to a random string
+   (e.g. `openssl rand -hex 32`) - this becomes `GOOGLE_SHEETS_WEBHOOK_SECRET`.
+4. **Deploy > New deployment**, type "Web app", execute as **Me**, access
+   **Anyone**. Copy the Web app URL into `GOOGLE_SHEETS_WEBHOOK_URL`.
+5. Whenever the script is edited, create a **new deployment version**
+   (Deploy > Manage deployments > edit > New version) - saving alone
+   doesn't republish it.
+
+Each user's `full_name` in Settings must exactly match a tab name in the
+sheet (case-sensitive) for the sync to find where to write. Leave the two
+env vars unset to disable this feature entirely - task creation still works
+normally either way.
+
 ## 4. Configure environment variables
 
 Copy `.env.example` to `.env.local` and fill in every value:

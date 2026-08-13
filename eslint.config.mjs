@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // AppleDouble shadow files (this project lives on an exFAT volume).
     "**/._*",
+    // Google Apps Script source - runs in Google's runtime, not this app.
+    "scripts/**",
   ]),
 ]);
 

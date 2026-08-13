@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { sendTaskAssignedEmail, sendTaskUpdatedEmail } from "@/lib/resend";
 import { fromDatetimeLocalPH } from "@/lib/ph-time";
+import { formatAccomplishmentText, syncTaskToSheet } from "@/lib/google-sheets";
 import type { Status, Task } from "@/types/database";
 import { CHECK_STAGE_LABELS, CHECK_STATUS_LABELS, PRIORITY_LABELS, STATUS_LABELS } from "./constants";
 import { taskCheckFormSchema, taskFormSchema } from "./schema";
@@ -18,6 +19,28 @@ async function resolveSegmentName(
   if (!segmentId) return "Unassigned";
   const { data } = await supabase.from("segments").select("name").eq("id", segmentId).single();
   return data?.name ?? "Unassigned";
+}
+
+async function resolveOutputTypeName(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  outputTypeId: string | null,
+): Promise<string | null> {
+  if (!outputTypeId) return null;
+  const { data } = await supabase
+    .from("output_types")
+    .select("name")
+    .eq("id", outputTypeId)
+    .single();
+  return data?.name ?? null;
+}
+
+async function resolveProfileName(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string | null,
+): Promise<string | null> {
+  if (!userId) return null;
+  const { data } = await supabase.from("profiles").select("full_name").eq("id", userId).single();
+  return data?.full_name ?? null;
 }
 
 async function requireUser() {
@@ -114,6 +137,22 @@ export async function createTask(formData: FormData) {
     actor_id: user.id,
     change_summary: "Task created",
   });
+
+  // Only logged when a start date is set at creation time - matches the PIO
+  // Daily Accomplishments sheet, which tracks work that has actually begun,
+  // not every task record. Tab is the assignee's full name (falls back to
+  // the creator's if unassigned), so it must match a tab name in the sheet.
+  if (task.started_editing_at) {
+    const tabName = await resolveProfileName(supabase, task.assigned_to ?? task.created_by);
+    if (tabName) {
+      const outputTypeName = await resolveOutputTypeName(supabase, task.output_type_id);
+      await syncTaskToSheet({
+        tab: tabName,
+        date: task.started_editing_at,
+        text: formatAccomplishmentText(outputTypeName, task.title),
+      });
+    }
+  }
 
   if (task.assigned_to && task.assigned_to !== user.id) {
     const { data: assignee } = await supabase
