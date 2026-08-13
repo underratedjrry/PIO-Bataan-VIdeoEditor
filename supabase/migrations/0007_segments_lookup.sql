@@ -34,22 +34,36 @@ on conflict (name) do nothing;
 alter table public.tasks
   add column if not exists segment_id uuid references public.segments (id) on delete set null;
 
--- Backfill existing rows from the old text enum to the matching new lookup row.
-update public.tasks t
-set segment_id = s.id
-from public.segments s
-where t.segment_id is null
-  and s.name = case t.segment
-    when 'rough_cut' then 'Rough Cut'
-    when 'fine_cut' then 'Fine Cut'
-    when 'color_grading' then 'Color Grading'
-    when 'sound_mix' then 'Sound Design / Mix'
-    when 'motion_graphics' then 'Motion Graphics / VFX'
-    when 'subtitles' then 'Subtitles / Captions'
-    when 'client_review' then 'Client Review'
-    when 'final_render' then 'Final Render'
-    else 'Other'
-  end;
+-- Backfill existing rows from the old text enum to the matching new lookup
+-- row. Guarded + dynamic: if a prior run of this migration already dropped
+-- `segment` below, referencing it here would fail to even parse, so this
+-- only runs (and only builds the SQL) when the column still exists.
+do $migrate$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'tasks' and column_name = 'segment'
+  ) then
+    execute $sql$
+      update public.tasks t
+      set segment_id = s.id
+      from public.segments s
+      where t.segment_id is null
+        and s.name = case t.segment
+          when 'rough_cut' then 'Rough Cut'
+          when 'fine_cut' then 'Fine Cut'
+          when 'color_grading' then 'Color Grading'
+          when 'sound_mix' then 'Sound Design / Mix'
+          when 'motion_graphics' then 'Motion Graphics / VFX'
+          when 'subtitles' then 'Subtitles / Captions'
+          when 'client_review' then 'Client Review'
+          when 'final_render' then 'Final Render'
+          else 'Other'
+        end
+    $sql$;
+  end if;
+end
+$migrate$;
 
 drop index if exists tasks_segment_idx;
 create index if not exists tasks_segment_id_idx on public.tasks (segment_id);
