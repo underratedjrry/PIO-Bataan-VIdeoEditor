@@ -19,6 +19,11 @@ export default async function DashboardLayout({
     { href: "/tasks", label: "Tasks" },
     { href: "/editors", label: "Video Editors" },
     { href: "/ai-assist", label: "AI Assist" },
+    {
+      href: "https://docs.google.com/spreadsheets/d/1x8Nl6RkVMr2YJPL3G0O_4IUrfn8hYJYbZoDNZhLguD4/edit?usp=sharing",
+      label: "PIO Accomplishments 2026",
+      external: true,
+    },
     ...(profile.role === "admin" ? [{ href: "/settings", label: "Settings" }] : []),
   ];
 

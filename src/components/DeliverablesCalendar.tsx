@@ -6,6 +6,7 @@ import { Modal } from "@/components/Modal";
 import { Badge } from "@/components/Badge";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import {
+  LOOKUP_BADGE_CLASSES,
   PRIORITY_BADGE_CLASSES,
   PRIORITY_LABELS,
   STATUS_BADGE_CLASSES,
@@ -19,6 +20,7 @@ export type DayTask = {
   title: string;
   status: Status;
   priority: Priority;
+  outputTypeColor: string | null;
   assigneeName: string | null;
   dueDate: string;
 };
@@ -141,7 +143,9 @@ export function DeliverablesCalendar({
                     <span
                       key={t.id}
                       title={t.title}
-                      className={`truncate rounded px-1.5 py-0.5 text-[11px] ${PRIORITY_BADGE_CLASSES[t.priority]}`}
+                      className={`truncate rounded px-1.5 py-0.5 text-[11px] ${
+                        LOOKUP_BADGE_CLASSES[t.outputTypeColor ?? "slate"] ?? LOOKUP_BADGE_CLASSES.slate
+                      }`}
                     >
                       {t.title}
                     </span>

@@ -28,7 +28,7 @@ export default async function DashboardPage({
   rangeEnd.setDate(rangeEnd.getDate() + 1);
 
   const supabase = await createClient();
-  const [{ data: tasks }, { data: profiles }] = await Promise.all([
+  const [{ data: tasks }, { data: profiles }, { data: outputTypes }] = await Promise.all([
     supabase
       .from("tasks")
       .select("*")
@@ -37,9 +37,11 @@ export default async function DashboardPage({
       .lt("due_date", rangeEnd.toISOString())
       .order("due_date", { ascending: true }),
     supabase.from("profiles").select("*"),
+    supabase.from("output_types").select("*"),
   ]);
 
   const profilesById = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]));
+  const outputTypesById = Object.fromEntries((outputTypes ?? []).map((ot) => [ot.id, ot]));
 
   const tasksByDay: Record<number, DayTask[]> = {};
   for (const task of tasks ?? []) {
@@ -52,6 +54,9 @@ export default async function DashboardPage({
       title: task.title,
       status: task.status,
       priority: task.priority,
+      outputTypeColor: task.output_type_id
+        ? (outputTypesById[task.output_type_id]?.color ?? null)
+        : null,
       assigneeName: task.assigned_to ? (profilesById[task.assigned_to]?.full_name ?? null) : null,
       dueDate: task.due_date,
     });

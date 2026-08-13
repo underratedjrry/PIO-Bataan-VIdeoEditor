@@ -55,21 +55,21 @@ export function DashboardShell({
         )}
 
         <aside
-          className={`fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white transition-transform dark:border-slate-800 dark:bg-slate-900 md:static md:z-auto md:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col border-r border-slate-200 bg-white transition-transform dark:border-slate-800 dark:bg-slate-900 md:static md:z-auto md:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <Link
             href="/tasks"
             onClick={() => setOpen(false)}
-            className="flex items-center border-b border-slate-200 px-4 py-5 dark:border-slate-800"
+            className="sticky top-0 z-10 flex shrink-0 items-center border-b border-slate-200 bg-white px-4 py-5 dark:border-slate-800 dark:bg-slate-900"
           >
             <Image src="/logo.png" alt="PIO Bataan" width={216} height={81} priority />
           </Link>
-          <div className="flex-1 p-3" onClick={() => setOpen(false)}>
+          <div className="flex-1 overflow-y-auto p-3" onClick={() => setOpen(false)}>
             <SidebarNav items={navItems} />
           </div>
-          <div className="flex items-center justify-between border-t border-slate-200 p-3 text-sm dark:border-slate-800">
+          <div className="flex shrink-0 items-center justify-between border-t border-slate-200 bg-white p-3 text-sm dark:border-slate-800 dark:bg-slate-900">
             <p className="min-w-0 truncate text-slate-500 dark:text-slate-400">
               {fullName}
               <span className="block text-xs uppercase text-slate-400 dark:text-slate-500">
