@@ -6,15 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PRIORITIES, PRIORITY_LABELS, STATUSES, STATUS_LABELS } from "@/lib/tasks/constants";
 import { taskFormSchema, type TaskFormValues } from "@/lib/tasks/schema";
 import { runWithToast } from "@/lib/toast-action";
+import { toDatetimeLocalPH } from "@/lib/ph-time";
 import { CheckIcon } from "@/components/icons";
 import type { OutputType, Profile, Segment, Task, Writer } from "@/types/database";
-
-function toDatetimeLocal(value: string | null | undefined) {
-  if (!value) return "";
-  const date = new Date(value);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
 
 export function TaskForm({
   task,
@@ -46,10 +40,10 @@ export function TaskForm({
       segment_id: task?.segment_id ?? "",
       priority: task?.priority ?? "medium",
       status: task?.status ?? "todo",
-      due_date: toDatetimeLocal(task?.due_date),
-      created_at: toDatetimeLocal(task?.created_at) || toDatetimeLocal(new Date().toISOString()),
-      started_editing_at: toDatetimeLocal(task?.started_editing_at),
-      completed_at: toDatetimeLocal(task?.completed_at),
+      due_date: toDatetimeLocalPH(task?.due_date),
+      created_at: toDatetimeLocalPH(task?.created_at) || toDatetimeLocalPH(new Date().toISOString()),
+      started_editing_at: toDatetimeLocalPH(task?.started_editing_at),
+      completed_at: toDatetimeLocalPH(task?.completed_at),
       assigned_to: task?.assigned_to ?? "",
       output_type_id: task?.output_type_id ?? "",
       writer_id: task?.writer_id ?? "",
@@ -130,15 +124,15 @@ export function TaskForm({
           </select>
         </Field>
 
-        <Field label="Due date" error={errors.due_date?.message}>
+        <Field label="Due date (PH time)" error={errors.due_date?.message}>
           <input type="datetime-local" {...register("due_date")} className="form-input" />
         </Field>
 
-        <Field label="Task created" error={errors.created_at?.message}>
+        <Field label="Task created (PH time)" error={errors.created_at?.message}>
           <input type="datetime-local" {...register("created_at")} className="form-input" />
         </Field>
 
-        <Field label="Start date" error={errors.started_editing_at?.message}>
+        <Field label="Start date (PH time)" error={errors.started_editing_at?.message}>
           <input
             type="datetime-local"
             placeholder="Auto-fills when status becomes In Progress"
@@ -147,7 +141,7 @@ export function TaskForm({
           />
         </Field>
 
-        <Field label="Completion date" error={errors.completed_at?.message}>
+        <Field label="Completion date (PH time)" error={errors.completed_at?.message}>
           <input
             type="datetime-local"
             placeholder="Auto-fills when status becomes Done"

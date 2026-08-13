@@ -1,13 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { DeliverablesCalendar, type DayTask } from "@/components/DeliverablesCalendar";
+import { getPHDateParts } from "@/lib/ph-time";
 
 function parseMonthParam(param?: string) {
   if (param && /^\d{4}-\d{2}$/.test(param)) {
     const [year, month] = param.split("-").map(Number);
     return { year, month: month - 1 };
   }
-  const now = new Date();
-  return { year: now.getFullYear(), month: now.getMonth() };
+  const now = getPHDateParts(new Date());
+  return { year: now.year, month: now.month };
 }
 
 export default async function DashboardPage({
@@ -43,9 +44,9 @@ export default async function DashboardPage({
   const tasksByDay: Record<number, DayTask[]> = {};
   for (const task of tasks ?? []) {
     if (!task.due_date) continue;
-    const due = new Date(task.due_date);
-    if (due.getFullYear() !== year || due.getMonth() !== month) continue;
-    const day = due.getDate();
+    const due = getPHDateParts(task.due_date);
+    if (due.year !== year || due.month !== month) continue;
+    const day = due.day;
     (tasksByDay[day] ??= []).push({
       id: task.id,
       title: task.title,

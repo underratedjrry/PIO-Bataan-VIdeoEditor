@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { sendTaskAssignedEmail, sendTaskUpdatedEmail } from "@/lib/resend";
+import { fromDatetimeLocalPH } from "@/lib/ph-time";
 import type { Status, Task } from "@/types/database";
 import { CHECK_STAGE_LABELS, CHECK_STATUS_LABELS, PRIORITY_LABELS, STATUS_LABELS } from "./constants";
 import { taskCheckFormSchema, taskFormSchema } from "./schema";
@@ -44,13 +45,13 @@ function statusTimingFields(
   const now = new Date().toISOString();
 
   if (manual.started_editing_at) {
-    fields.started_editing_at = new Date(manual.started_editing_at).toISOString();
+    fields.started_editing_at = fromDatetimeLocalPH(manual.started_editing_at);
   } else if (nextStatus === "in_progress" && !existing.started_editing_at) {
     fields.started_editing_at = now;
   }
 
   if (manual.completed_at) {
-    fields.completed_at = new Date(manual.completed_at).toISOString();
+    fields.completed_at = fromDatetimeLocalPH(manual.completed_at);
   } else if (nextStatus === "done" && !existing.completed_at) {
     fields.completed_at = now;
   }
@@ -88,8 +89,8 @@ export async function createTask(formData: FormData) {
       segment_id: values.segment_id || null,
       priority: values.priority,
       status: values.status,
-      due_date: values.due_date ? new Date(values.due_date).toISOString() : null,
-      created_at: values.created_at ? new Date(values.created_at).toISOString() : undefined,
+      due_date: values.due_date ? fromDatetimeLocalPH(values.due_date) : null,
+      created_at: values.created_at ? fromDatetimeLocalPH(values.created_at) : undefined,
       assigned_to: values.assigned_to || null,
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
@@ -150,8 +151,8 @@ export async function updateTask(taskId: string, formData: FormData) {
       segment_id: values.segment_id || null,
       priority: values.priority,
       status: values.status,
-      due_date: values.due_date ? new Date(values.due_date).toISOString() : null,
-      created_at: values.created_at ? new Date(values.created_at).toISOString() : existing.created_at,
+      due_date: values.due_date ? fromDatetimeLocalPH(values.due_date) : null,
+      created_at: values.created_at ? fromDatetimeLocalPH(values.created_at) : existing.created_at,
       assigned_to: values.assigned_to || null,
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,

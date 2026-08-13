@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { OutputType, Profile, Role, Segment, Task, TaskCheck } from "@/types/database";
 import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS, LOOKUP_BADGE_CLASSES } from "@/lib/tasks/constants";
 import { deleteTask } from "@/lib/tasks/actions";
+import { formatPHDate } from "@/lib/ph-time";
 import { Badge } from "./Badge";
 import { StatusSelect } from "./StatusSelect";
 import { DeleteTaskButton } from "./DeleteTaskButton";
@@ -114,7 +115,7 @@ export function TaskTable({
                       : "text-slate-600 dark:text-slate-400"
                   }`}
                 >
-                  {task.due_date ? new Date(task.due_date).toLocaleDateString() : "-"}
+                  {task.due_date ? formatPHDate(task.due_date) : "-"}
                 </td>
                 <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                   {task.assigned_to

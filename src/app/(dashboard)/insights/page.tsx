@@ -4,6 +4,7 @@ import { computePerformanceStats } from "@/lib/tasks/stats";
 import { generateAlgorithmicNarrative, type PerformanceStats } from "@/lib/tasks/narrative";
 import { InsightsCharts } from "@/components/InsightsCharts";
 import { RegenerateInsightsButton } from "@/components/RegenerateInsightsButton";
+import { formatPHDateTime } from "@/lib/ph-time";
 
 const EMPTY_STATS: PerformanceStats = {
   totalTasks: 0,
@@ -53,7 +54,7 @@ export default async function InsightsPage() {
           </h1>
           {cached && (
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Last analyzed {new Date(cached.generated_at).toLocaleString()}
+              Last analyzed {formatPHDateTime(cached.generated_at)}
             </p>
           )}
         </div>

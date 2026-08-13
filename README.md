@@ -147,6 +147,12 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
 - A task's **Task created** date/time is an editable field on the task form
   (defaults to the current date/time for new tasks), so it can be backdated
   to when work actually started instead of when the record was entered.
+- All displayed and editable timestamps (task dates, activity/check logs,
+  user "joined" date, calendar day grouping, emails) are pinned to
+  **Philippine Standard Time (Asia/Manila, UTC+8)** via `src/lib/ph-time.ts`,
+  regardless of the viewing device's or the server's own local timezone -
+  the database itself still stores UTC (`timestamptz`), only display/input
+  is PH-fixed.
 - Clicking a task in the list opens it in a modal (view/edit/delete, plus
   Checked By) via a Next.js intercepting route - the same URL
   (`/tasks/[id]`) also works as a normal full page on direct load/refresh.

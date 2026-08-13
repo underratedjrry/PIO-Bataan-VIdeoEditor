@@ -8,6 +8,7 @@ import { DeleteTaskButton } from "@/components/DeleteTaskButton";
 import { AddTaskCheckForm } from "@/components/AddTaskCheckForm";
 import { Badge } from "@/components/Badge";
 import { PencilIcon } from "@/components/icons";
+import { formatPHDateTime } from "@/lib/ph-time";
 import {
   CHECK_STAGE_LABELS,
   CHECK_STATUS_BADGE_CLASSES,
@@ -137,7 +138,7 @@ export async function TaskDetailContent({ id, mode }: { id: string; mode?: strin
                   </Badge>
                 </div>
                 <span className="text-xs text-slate-400">
-                  {new Date(check.created_at).toLocaleString()}
+                  {formatPHDateTime(check.created_at)}
                 </span>
               </div>
               {check.remarks && (
@@ -167,7 +168,7 @@ export async function TaskDetailContent({ id, mode }: { id: string; mode?: strin
                 {entry.change_summary}
               </span>
               <span className="shrink-0 text-xs text-slate-400">
-                {new Date(entry.created_at).toLocaleString()}
+                {formatPHDateTime(entry.created_at)}
               </span>
             </li>
           ))}
@@ -217,10 +218,10 @@ function ReadOnlyTaskDetails({
         )}
       </div>
       <p className="text-slate-500 dark:text-slate-400">
-        Task created: {new Date(task.created_at).toLocaleString()}
+        Task created: {formatPHDateTime(task.created_at)}
       </p>
       <p className="text-slate-500 dark:text-slate-400">
-        Due: {task.due_date ? new Date(task.due_date).toLocaleString() : "No due date"}
+        Due: {task.due_date ? formatPHDateTime(task.due_date) : "No due date"}
       </p>
       <p className="text-slate-500 dark:text-slate-400">
         Assignee: {assignee?.full_name ?? "Unassigned"}

@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import type { Task } from "@/types/database";
 import { PRIORITY_LABELS } from "@/lib/tasks/constants";
+import { PH_TIME_ZONE } from "@/lib/ph-time";
 
 export type TaskWithSegmentName = Task & { segmentName: string };
 
@@ -29,7 +30,8 @@ function taskLink(taskId: string) {
 
 function formatDue(task: Task) {
   return task.due_date
-    ? new Date(task.due_date).toLocaleString(undefined, {
+    ? new Date(task.due_date).toLocaleString("en-PH", {
+        timeZone: PH_TIME_ZONE,
         dateStyle: "medium",
         timeStyle: "short",
       })

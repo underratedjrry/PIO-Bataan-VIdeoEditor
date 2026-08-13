@@ -6,6 +6,7 @@ import { RoleSelect } from "@/components/RoleSelect";
 import { runWithToast } from "@/lib/toast-action";
 import { deleteUserAccount, updateUserName } from "@/lib/admin/actions";
 import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "@/components/icons";
+import { formatPHDateTime } from "@/lib/ph-time";
 import type { Profile } from "@/types/database";
 
 export function UserModal({
@@ -100,7 +101,7 @@ export function UserModal({
         <div>
           <span className="block text-xs font-medium uppercase text-slate-400">Joined</span>
           <p className="mt-1 text-slate-900 dark:text-slate-100">
-            {new Date(user.created_at).toLocaleString()}
+            {formatPHDateTime(user.created_at)}
           </p>
         </div>
       </div>

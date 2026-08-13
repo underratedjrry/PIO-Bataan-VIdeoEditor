@@ -11,6 +11,7 @@ import {
   STATUS_BADGE_CLASSES,
   STATUS_LABELS,
 } from "@/lib/tasks/constants";
+import { getPHDateParts } from "@/lib/ph-time";
 import type { Priority, Status } from "@/types/database";
 
 export type DayTask = {
@@ -46,8 +47,8 @@ export function DeliverablesCalendar({
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startWeekday = new Date(year, month, 1).getDay();
 
-  const today = new Date();
-  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const today = getPHDateParts(new Date());
+  const isCurrentMonth = today.year === year && today.month === month;
 
   const prevMonth = new Date(year, month - 1, 1);
   const nextMonth = new Date(year, month + 1, 1);
@@ -113,7 +114,7 @@ export function DeliverablesCalendar({
               return <div key={index} className="min-h-[100px] bg-white dark:bg-slate-900" />;
             }
             const dayTasks = tasksByDay[day] ?? [];
-            const isToday = isCurrentMonth && today.getDate() === day;
+            const isToday = isCurrentMonth && today.day === day;
             return (
               <button
                 type="button"
