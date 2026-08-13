@@ -48,7 +48,7 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
               readOnly
               value={shareUrl}
               onFocus={(event) => event.currentTarget.select()}
-              className="form-input flex-1"
+              className="form-input min-w-0 flex-1"
             />
             <button
               type="button"

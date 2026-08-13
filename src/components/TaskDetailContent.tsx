@@ -230,7 +230,7 @@ export function ReadOnlyTaskDetails({
       </p>
       <p className="text-slate-500 dark:text-slate-400">Writer: {writer?.name ?? "Unassigned"}</p>
       {task.output_link && (
-        <p className="text-slate-500 dark:text-slate-400">
+        <p className="break-all text-slate-500 dark:text-slate-400">
           Output Link:{" "}
           <a
             href={task.output_link}
