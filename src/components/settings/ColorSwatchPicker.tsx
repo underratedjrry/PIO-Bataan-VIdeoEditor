@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { runWithToast } from "@/lib/toast-action";
 import { LOOKUP_COLORS, LOOKUP_SWATCH_CLASSES } from "@/lib/tasks/constants";
+
+const POPOVER_WIDTH = 136;
 
 export function ColorSwatchPicker({
   id,
@@ -14,13 +16,27 @@ export function ColorSwatchPicker({
   onSetColor: (id: string, color: string) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [isPending, startTransition] = useTransition();
 
+  function openPicker() {
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (rect) {
+      setPosition({
+        top: rect.bottom + 4,
+        left: Math.min(rect.left, window.innerWidth - POPOVER_WIDTH - 8),
+      });
+    }
+    setOpen(true);
+  }
+
   return (
-    <div className="relative inline-block">
+    <div className="inline-block">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => (open ? setOpen(false) : openPicker())}
         aria-label="Change color"
         title="Change color"
         disabled={isPending}
@@ -28,15 +44,21 @@ export function ColorSwatchPicker({
           open ? "ring-2 ring-slate-400 ring-offset-2 dark:ring-offset-slate-900" : ""
         }`}
       />
-      {open && (
+      {open && position && (
         <>
+          {/* Fixed (viewport-relative), not absolute - the settings table's
+              scroll container clips absolutely-positioned children, which
+              was cutting this popover off near the bottom of the table. */}
           <button
             type="button"
             aria-label="Close"
-            className="fixed inset-0 z-10 cursor-default"
+            className="fixed inset-0 z-40 cursor-default"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute left-0 top-7 z-20 flex w-[136px] flex-wrap gap-1.5 rounded-lg border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
+          <div
+            className="fixed z-50 flex flex-wrap gap-1.5 rounded-lg border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+            style={{ top: position.top, left: position.left, width: POPOVER_WIDTH }}
+          >
             {LOOKUP_COLORS.map((c) => (
               <button
                 key={c}
