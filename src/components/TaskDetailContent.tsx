@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { addTaskCheck, deleteTask, updateTask } from "@/lib/tasks/actions";
 import { TaskForm } from "@/components/TaskForm";
 import { DeleteTaskButton } from "@/components/DeleteTaskButton";
+import { ShareTaskButton } from "@/components/ShareTaskButton";
 import { AddTaskCheckForm } from "@/components/AddTaskCheckForm";
 import { Badge } from "@/components/Badge";
 import { PencilIcon } from "@/components/icons";
@@ -91,6 +92,7 @@ export async function TaskDetailContent({ id, mode }: { id: string; mode?: strin
               <PencilIcon className="h-4 w-4" />
             </Link>
           )}
+          <ShareTaskButton taskId={task.id} />
           {canDelete && <DeleteTaskButton onDelete={boundDelete} />}
         </div>
       </div>
@@ -181,7 +183,7 @@ export async function TaskDetailContent({ id, mode }: { id: string; mode?: strin
   );
 }
 
-function ReadOnlyTaskDetails({
+export function ReadOnlyTaskDetails({
   task,
   assignee,
   outputType,

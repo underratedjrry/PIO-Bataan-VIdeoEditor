@@ -3,6 +3,7 @@ import type { OutputType, Profile, Role, Segment, Task, TaskCheck } from "@/type
 import { CHECK_STATUS_BADGE_CLASSES, CHECK_STATUS_LABELS, LOOKUP_BADGE_CLASSES } from "@/lib/tasks/constants";
 import { deleteTask } from "@/lib/tasks/actions";
 import { formatPHDate } from "@/lib/ph-time";
+import { ShareTaskButton } from "./ShareTaskButton";
 import { Badge } from "./Badge";
 import { StatusSelect } from "./StatusSelect";
 import { DeleteTaskButton } from "./DeleteTaskButton";
@@ -154,6 +155,7 @@ export function TaskTable({
                         <PencilIcon className="h-4 w-4" />
                       </Link>
                     )}
+                    <ShareTaskButton taskId={task.id} />
                     {canDelete && <DeleteTaskButton onDelete={boundDelete} />}
                   </div>
                 </td>

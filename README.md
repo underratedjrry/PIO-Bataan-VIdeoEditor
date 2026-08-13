@@ -159,6 +159,15 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
   It opens **read-only** by default (Output Link renders as a clickable
   link) - the pencil icon or `?mode=edit` switches it into the editable
   form.
+- **Share** (link icon, next to Edit/Delete on the task list and task view)
+  opens a modal with a public link (`/share/tasks/[id]`) to a read-only copy
+  of that task - title, status/priority/segment/output type, dates,
+  assignee, writer, output link, Checked By history, and Activity log.
+  This link needs **no login** - it's outside the auth-gated `(dashboard)`
+  route group and served via the service-role Supabase client, gated only
+  by the task's own unguessable UUID (the same trust model as any
+  "anyone with the link" share URL). Anyone with the link can view it, so
+  only share task links with people who should see that task's details.
 - **Dashboard** (`/dashboard`) is a month calendar of all tasks by due
   date (a booking-calendar style view, not scoped to the signed-in user).
   Clicking a date with tasks opens a modal listing them, each linking into

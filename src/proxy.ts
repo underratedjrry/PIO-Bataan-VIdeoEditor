@@ -2,10 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 const AUTH_ROUTES = ["/login", "/signup"];
+// Publicly viewable without a session - e.g. task share links, which gate
+// access via the task's own unguessable UUID instead of auth.
+const PUBLIC_ROUTES = ["/share"];
 
 // Next.js 16 renamed middleware.ts -> proxy.ts (export `proxy` instead of
 // `middleware`); it now runs on the Node.js runtime only.
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -33,7 +41,6 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
   if (!user && !isAuthRoute) {
