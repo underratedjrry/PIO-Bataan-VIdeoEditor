@@ -48,6 +48,8 @@ export function TaskForm({
       status: task?.status ?? "todo",
       due_date: toDatetimeLocal(task?.due_date),
       created_at: toDatetimeLocal(task?.created_at) || toDatetimeLocal(new Date().toISOString()),
+      started_editing_at: toDatetimeLocal(task?.started_editing_at),
+      completed_at: toDatetimeLocal(task?.completed_at),
       assigned_to: task?.assigned_to ?? "",
       output_type_id: task?.output_type_id ?? "",
       writer_id: task?.writer_id ?? "",
@@ -64,6 +66,8 @@ export function TaskForm({
     formData.set("status", values.status);
     formData.set("due_date", values.due_date ?? "");
     formData.set("created_at", values.created_at ?? "");
+    formData.set("started_editing_at", values.started_editing_at ?? "");
+    formData.set("completed_at", values.completed_at ?? "");
     formData.set("assigned_to", values.assigned_to ?? "");
     formData.set("output_type_id", values.output_type_id ?? "");
     formData.set("writer_id", values.writer_id ?? "");
@@ -132,6 +136,24 @@ export function TaskForm({
 
         <Field label="Task created" error={errors.created_at?.message}>
           <input type="datetime-local" {...register("created_at")} className="form-input" />
+        </Field>
+
+        <Field label="Start date" error={errors.started_editing_at?.message}>
+          <input
+            type="datetime-local"
+            placeholder="Auto-fills when status becomes In Progress"
+            {...register("started_editing_at")}
+            className="form-input"
+          />
+        </Field>
+
+        <Field label="Completion date" error={errors.completed_at?.message}>
+          <input
+            type="datetime-local"
+            placeholder="Auto-fills when status becomes Done"
+            {...register("completed_at")}
+            className="form-input"
+          />
         </Field>
 
         <Field label="Writer" error={errors.writer_id?.message}>

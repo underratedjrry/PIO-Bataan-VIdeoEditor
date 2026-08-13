@@ -31,20 +31,30 @@ async function requireUser() {
 // Sets started_editing_at / completed_at the first time a task reaches
 // in_progress / done respectively, so later editing-duration calculations
 // use real start/finish points instead of created_at/updated_at (which
-// change on any edit, not just these transitions).
+// change on any edit, not just these transitions). Both are also directly
+// editable on the task form - an explicit `manual` value always wins;
+// leaving the field untouched falls back to the automatic now-on-transition
+// behavior.
 function statusTimingFields(
   existing: Pick<Task, "started_editing_at" | "completed_at">,
   nextStatus: Status,
+  manual: { started_editing_at?: string; completed_at?: string } = {},
 ): Partial<Pick<Task, "started_editing_at" | "completed_at">> {
   const fields: Partial<Pick<Task, "started_editing_at" | "completed_at">> = {};
   const now = new Date().toISOString();
 
-  if (nextStatus === "in_progress" && !existing.started_editing_at) {
+  if (manual.started_editing_at) {
+    fields.started_editing_at = new Date(manual.started_editing_at).toISOString();
+  } else if (nextStatus === "in_progress" && !existing.started_editing_at) {
     fields.started_editing_at = now;
   }
-  if (nextStatus === "done" && !existing.completed_at) {
+
+  if (manual.completed_at) {
+    fields.completed_at = new Date(manual.completed_at).toISOString();
+  } else if (nextStatus === "done" && !existing.completed_at) {
     fields.completed_at = now;
   }
+
   return fields;
 }
 
@@ -57,6 +67,8 @@ function parseTaskForm(formData: FormData) {
     status: String(formData.get("status") ?? "todo"),
     due_date: String(formData.get("due_date") ?? ""),
     created_at: String(formData.get("created_at") ?? ""),
+    started_editing_at: String(formData.get("started_editing_at") ?? ""),
+    completed_at: String(formData.get("completed_at") ?? ""),
     assigned_to: String(formData.get("assigned_to") ?? ""),
     output_type_id: String(formData.get("output_type_id") ?? ""),
     writer_id: String(formData.get("writer_id") ?? ""),
@@ -83,6 +95,11 @@ export async function createTask(formData: FormData) {
       writer_id: values.writer_id || null,
       output_link: values.output_link || null,
       created_by: user.id,
+      ...statusTimingFields(
+        { started_editing_at: null, completed_at: null },
+        values.status,
+        { started_editing_at: values.started_editing_at, completed_at: values.completed_at },
+      ),
     })
     .select()
     .single();
@@ -139,7 +156,10 @@ export async function updateTask(taskId: string, formData: FormData) {
       output_type_id: values.output_type_id || null,
       writer_id: values.writer_id || null,
       output_link: values.output_link || null,
-      ...statusTimingFields(existing, values.status),
+      ...statusTimingFields(existing, values.status, {
+        started_editing_at: values.started_editing_at,
+        completed_at: values.completed_at,
+      }),
     })
     .eq("id", taskId)
     .select()
