@@ -62,3 +62,11 @@ export function getPHDateParts(value: string | Date): { year: number; month: num
     day: shifted.getUTCDate(),
   };
 }
+
+// Whether two timestamps fall on the same PH calendar day - used to avoid
+// re-syncing a task to Google Sheets more than once per day.
+export function isSamePHDay(a: string | Date, b: string | Date): boolean {
+  const partsA = getPHDateParts(a);
+  const partsB = getPHDateParts(b);
+  return partsA.year === partsB.year && partsA.month === partsB.month && partsA.day === partsB.day;
+}

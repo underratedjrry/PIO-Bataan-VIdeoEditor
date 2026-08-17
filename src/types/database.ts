@@ -38,6 +38,7 @@ export type Task = {
   output_link: string | null;
   started_editing_at: string | null;
   completed_at: string | null;
+  last_sheet_synced_at: string | null;
   created_at: string;
   updated_at: string;
 };

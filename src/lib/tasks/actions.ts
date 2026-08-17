@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { sendTaskAssignedEmail, sendTaskUpdatedEmail } from "@/lib/resend";
-import { fromDatetimeLocalPH } from "@/lib/ph-time";
+import { fromDatetimeLocalPH, isSamePHDay } from "@/lib/ph-time";
 import { formatAccomplishmentText, syncTaskToSheet } from "@/lib/google-sheets";
 import type { Status, Task } from "@/types/database";
 import { CHECK_STAGE_LABELS, CHECK_STATUS_LABELS, PRIORITY_LABELS, STATUS_LABELS } from "./constants";
@@ -41,6 +41,27 @@ async function resolveProfileName(
   if (!userId) return null;
   const { data } = await supabase.from("profiles").select("full_name").eq("id", userId).single();
   return data?.full_name ?? null;
+}
+
+// Logs one accomplishment row to the Sheet and stamps last_sheet_synced_at
+// so later same-day edits don't create duplicate rows (see updateTask).
+async function syncTaskAccomplishment(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  task: Task,
+  date: string,
+) {
+  const tabName = await resolveProfileName(supabase, task.assigned_to ?? task.created_by);
+  if (!tabName) return;
+  const outputTypeName = await resolveOutputTypeName(supabase, task.output_type_id);
+  await syncTaskToSheet({
+    tab: tabName,
+    date,
+    text: formatAccomplishmentText(outputTypeName, task.title),
+  });
+  await supabase
+    .from("tasks")
+    .update({ last_sheet_synced_at: new Date().toISOString() })
+    .eq("id", task.id);
 }
 
 async function requireUser() {
@@ -143,15 +164,7 @@ export async function createTask(formData: FormData) {
   // not every task record. Tab is the assignee's full name (falls back to
   // the creator's if unassigned), so it must match a tab name in the sheet.
   if (task.started_editing_at) {
-    const tabName = await resolveProfileName(supabase, task.assigned_to ?? task.created_by);
-    if (tabName) {
-      const outputTypeName = await resolveOutputTypeName(supabase, task.output_type_id);
-      await syncTaskToSheet({
-        tab: tabName,
-        date: task.started_editing_at,
-        text: formatAccomplishmentText(outputTypeName, task.title),
-      });
-    }
+    await syncTaskAccomplishment(supabase, task as Task, task.started_editing_at);
   }
 
   if (task.assigned_to && task.assigned_to !== user.id) {
@@ -207,6 +220,17 @@ export async function updateTask(taskId: string, formData: FormData) {
 
   if (error || !updated) {
     throw new Error(error?.message ?? "Failed to update task");
+  }
+
+  // A segment change is treated as continued work worth logging again - but
+  // only once per PH calendar day, so re-editing the segment (or anything
+  // else) later the same day doesn't add duplicate rows for the same task.
+  if (
+    updated.started_editing_at &&
+    existing.segment_id !== updated.segment_id &&
+    (!updated.last_sheet_synced_at || !isSamePHDay(updated.last_sheet_synced_at, new Date()))
+  ) {
+    await syncTaskAccomplishment(supabase, updated as Task, new Date().toISOString());
   }
 
   const changes: string[] = [];

@@ -20,8 +20,8 @@ due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
 2. In the SQL Editor, run these migrations **in order**:
    `0001_init.sql`, `0002_editorial_workflow.sql`, `0003_user_management.sql`,
    `0004_output_link.sql`, `0005_checked_by_writer.sql`,
-   `0006_task_timing.sql`, `0007_segments_lookup.sql`, then
-   `0008_lookup_colors.sql` (all under `supabase/migrations/`). Together
+   `0006_task_timing.sql`, `0007_segments_lookup.sql`, `0008_lookup_colors.sql`,
+   then `0009_sheet_sync_tracking.sql` (all under `supabase/migrations/`). Together
    these create all tables, RLS policies,
    seed data (default Output Types and Segments), and a trigger that
    auto-provisions a `profiles` row on signup - **the first user to sign up
@@ -51,10 +51,16 @@ still loads but replies with a message saying the feature is unavailable.
 
 ## 3b. (Optional) Set up Google Sheets sync
 
-Automatically logs new tasks into the "PIO Daily Accomplishments" Google
-Sheet - only for tasks that already have a **start date** set at creation,
-one row per task, on the tab matching the assignee's (or creator's, if
-unassigned) full name.
+Automatically logs work into the "PIO Daily Accomplishments" Google Sheet,
+on the tab matching the assignee's (or creator's, if unassigned) full name:
+
+- **On task creation**, only if a **start date** was set - logged under
+  that start date.
+- **On a segment change** (e.g. Rough Cut -> Fine Cut), logged under
+  today's date - but at most once per PH calendar day per task, so
+  re-editing the segment (or anything else) again later the same day
+  doesn't add a duplicate row. Editing tomorrow (or any later day) logs
+  again.
 
 1. Open the target spreadsheet -> **Extensions > Apps Script**.
 2. Paste in the contents of `scripts/google-apps-script.js` (this repo),
