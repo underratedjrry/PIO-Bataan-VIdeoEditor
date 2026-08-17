@@ -5,20 +5,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { SidebarNav } from "./SidebarNav";
 import { ClockAndWeather } from "./ClockAndWeather";
+import { NotificationBell } from "./NotificationBell";
 import { Footer } from "./Footer";
 import { LogOutIcon } from "./icons";
+import type { DueTaskSummary } from "@/lib/tasks/notifications";
 
 export function DashboardShell({
   navItems,
   fullName,
   role,
   logoutAction,
+  overdue,
+  dueSoon,
   children,
 }: {
   navItems: { href: string; label: string }[];
   fullName: string;
   role: string;
   logoutAction: () => Promise<void>;
+  overdue: DueTaskSummary[];
+  dueSoon: DueTaskSummary[];
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -40,9 +46,10 @@ export function DashboardShell({
             </svg>
           </button>
           <Image src="/logo-icon.png" alt="" width={28} height={28} />
-          <span className="font-semibold text-slate-900 dark:text-slate-50">
+          <span className="min-w-0 flex-1 truncate font-semibold text-slate-900 dark:text-slate-50">
             PIO Bataan - VE PMIS
           </span>
+          <NotificationBell overdue={overdue} dueSoon={dueSoon} />
         </div>
 
         {open && (
@@ -90,8 +97,9 @@ export function DashboardShell({
         </aside>
 
         <main className="min-w-0 flex-1 overflow-y-auto bg-slate-50 px-4 py-6 dark:bg-slate-950/40 md:px-6 md:py-8">
-          <div className="mb-4 hidden justify-end md:flex">
+          <div className="mb-4 hidden items-center justify-end gap-4 md:flex">
             <ClockAndWeather />
+            <NotificationBell overdue={overdue} dueSoon={dueSoon} />
           </div>
           <div className="border-2 border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
             {children}

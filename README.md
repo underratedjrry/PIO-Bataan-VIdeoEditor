@@ -197,10 +197,15 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
   by the task's own unguessable UUID (the same trust model as any
   "anyone with the link" share URL). Anyone with the link can view it, so
   only share task links with people who should see that task's details.
-- **Dashboard** (`/dashboard`) is a month calendar of all tasks by due
-  date (a booking-calendar style view, not scoped to the signed-in user).
-  Clicking a date with tasks opens a modal listing them, each linking into
-  the normal task view.
+- **Dashboard** (`/dashboard`) opens with a row of quick-action tiles (New
+  Task, Tasks, Video Editors, Insights, AI Assist, and Settings for admins),
+  then a month calendar of all tasks by due date below (a booking-calendar
+  style view, not scoped to the signed-in user). Clicking a date with tasks
+  opens a modal listing them, each linking into the normal task view.
+- A **notification bell** in the header (both desktop and mobile) shows the
+  signed-in user's own overdue and due-soon-within-3-days tasks, computed
+  live on every page load - same recipient logic as the email digest
+  (assigned, falling back to the task's creator if unassigned).
 - Tasks can carry an **Output Link** (a pasted URL to the finished
   deliverable), shown on the task detail view/CSV export.
 - The Insights page computes each signed-in user's own performance

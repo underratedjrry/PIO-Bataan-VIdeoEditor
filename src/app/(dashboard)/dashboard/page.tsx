@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/supabase/profile";
 import { DeliverablesCalendar, type DayTask } from "@/components/DeliverablesCalendar";
+import { DashboardQuickActions } from "@/components/DashboardQuickActions";
 import { getPHDateParts } from "@/lib/ph-time";
 
 function parseMonthParam(param?: string) {
@@ -18,6 +20,7 @@ export default async function DashboardPage({
 }) {
   const { month: monthParam } = await searchParams;
   const { year, month } = parseMonthParam(monthParam);
+  const { profile } = await getCurrentProfile();
 
   // Query a day of buffer on each side of the month so tasks near the
   // month boundary aren't dropped by timezone differences between the DB's
@@ -62,5 +65,10 @@ export default async function DashboardPage({
     });
   }
 
-  return <DeliverablesCalendar year={year} month={month} tasksByDay={tasksByDay} />;
+  return (
+    <div className="flex flex-col gap-8">
+      <DashboardQuickActions role={profile.role} />
+      <DeliverablesCalendar year={year} month={month} tasksByDay={tasksByDay} />
+    </div>
+  );
 }
