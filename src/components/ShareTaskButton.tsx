@@ -50,7 +50,7 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
         onClick={() => (open ? setOpen(false) : openPopover())}
         aria-label="Share task"
         title="Share"
-        className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+        className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
       >
         <LinkIcon className="h-4 w-4" />
       </button>
@@ -64,7 +64,7 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
             onClick={() => setOpen(false)}
           />
           <div
-            className="fixed z-50 rounded-lg border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+            className="fixed z-50 rounded-none border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-800"
             style={{ top: position.top, left: position.left, width: POPOVER_WIDTH }}
           >
             <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
@@ -82,7 +82,7 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
                 onClick={copyLink}
                 aria-label="Copy link"
                 title="Copy link"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5]"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583]"
               >
                 {copied ? <CheckIcon className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
               </button>

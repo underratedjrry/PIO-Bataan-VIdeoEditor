@@ -7,7 +7,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex flex-1 items-center justify-center bg-white px-4 dark:bg-slate-900">
-      <div className="w-full max-w-sm overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="w-full max-w-sm overflow-hidden border-2 border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="brand-accent-strip" />
         <div className="flex flex-col items-center p-8 text-center">
           <Image

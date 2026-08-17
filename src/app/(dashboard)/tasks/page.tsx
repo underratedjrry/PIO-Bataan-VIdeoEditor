@@ -50,7 +50,7 @@ export default async function TasksPage({
             href="/tasks/new"
             aria-label="New task"
             title="New task"
-            className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5]"
+            className="flex h-9 w-9 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583]"
           >
             <PlusIcon className="h-4 w-4" />
           </Link>

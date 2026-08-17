@@ -36,7 +36,7 @@ export function AiAssistChat() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex min-h-[320px] flex-col gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800">
+      <div className="flex min-h-[320px] flex-col gap-3 rounded-none border border-slate-200 p-4 dark:border-slate-800">
         {messages.length === 0 && (
           <p className="text-sm text-slate-400">
             Ask for help drafting task descriptions, captions, summaries, or anything else.
@@ -45,9 +45,9 @@ export function AiAssistChat() {
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-line ${
+            className={`max-w-[85%] rounded-none px-3 py-2 text-sm whitespace-pre-line ${
               m.role === "user"
-                ? "ml-auto bg-[#1565D8] text-white"
+                ? "ml-auto bg-[#0036AF] text-white"
                 : "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100"
             }`}
           >
@@ -82,7 +82,7 @@ export function AiAssistChat() {
           disabled={isPending || !input.trim()}
           aria-label="Send"
           title="Send"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583] disabled:opacity-60"
         >
           <SendIcon className="h-4 w-4" />
         </button>

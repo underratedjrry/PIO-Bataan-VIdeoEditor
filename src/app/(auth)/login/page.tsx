@@ -23,7 +23,7 @@ export default async function LoginPage({
             type="email"
             autoComplete="email"
             required
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+            className="form-input"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -34,20 +34,17 @@ export default async function LoginPage({
         </div>
 
         {message && (
-          <p className="rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+          <p className="border-l-4 border-blue-500 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950 dark:text-blue-300">
             {message}
           </p>
         )}
         {error && (
-          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+          <p className="border-l-4 border-red-600 bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
             {error}
           </p>
         )}
 
-        <button
-          type="submit"
-          className="mt-2 flex items-center justify-center gap-2 rounded-md bg-[#1565D8] px-3 py-2 text-sm font-medium text-white hover:bg-[#0F52B5]"
-        >
+        <button type="submit" className="btn-primary mt-2 flex items-center justify-center gap-2">
           Sign in
           <ArrowRightIcon className="h-4 w-4" />
         </button>
@@ -55,7 +52,7 @@ export default async function LoginPage({
 
       <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         No account?{" "}
-        <Link href="/signup" className="font-medium text-[#1565D8] underline dark:text-[#5B9BEA]">
+        <Link href="/signup" className="font-medium text-[#0036AF] underline dark:text-[#5B9BEA]">
           Sign up
         </Link>
       </p>

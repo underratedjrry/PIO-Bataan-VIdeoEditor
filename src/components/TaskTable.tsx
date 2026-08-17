@@ -41,7 +41,7 @@ export function TaskTable({
   const now = Date.now();
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+    <div className="overflow-x-auto rounded-none border border-slate-200 dark:border-slate-800">
       <table className="w-full min-w-[960px] text-left text-sm">
         <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
           <tr>
@@ -141,7 +141,7 @@ export function TaskTable({
                       href={`/tasks/${task.id}`}
                       aria-label="View task"
                       title="View"
-                      className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+                      className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
                     >
                       <EyeIcon className="h-4 w-4" />
                     </Link>
@@ -150,7 +150,7 @@ export function TaskTable({
                         href={`/tasks/${task.id}?mode=edit`}
                         aria-label="Edit task"
                         title="Edit"
-                        className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+                        className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
                       >
                         <PencilIcon className="h-4 w-4" />
                       </Link>

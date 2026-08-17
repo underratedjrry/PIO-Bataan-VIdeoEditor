@@ -63,7 +63,7 @@ export default async function InsightsPage() {
 
       <InsightsCharts stats={stats} />
 
-      <div className="max-w-2xl rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+      <div className="max-w-2xl rounded-none border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
         <h2 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
           Performance Analysis
         </h2>

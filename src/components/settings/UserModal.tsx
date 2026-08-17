@@ -53,7 +53,7 @@ export function UserModal({
                     if (ok) setEditingName(false);
                   })
                 }
-                className="rounded-md bg-[#1565D8] p-2 text-white hover:bg-[#0F52B5] disabled:opacity-60"
+                className="rounded-none bg-[#0036AF] p-2 text-white hover:bg-[#002583] disabled:opacity-60"
               >
                 <CheckIcon className="h-4 w-4" />
               </button>
@@ -65,7 +65,7 @@ export function UserModal({
                   setName(user.full_name);
                   setEditingName(false);
                 }}
-                className="rounded-md border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+                className="rounded-none border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
               >
                 <XIcon className="h-4 w-4" />
               </button>
@@ -78,7 +78,7 @@ export function UserModal({
                 onClick={() => setEditingName(true)}
                 aria-label="Edit name"
                 title="Edit"
-                className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+                className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
               >
                 <PencilIcon className="h-4 w-4" />
               </button>
@@ -120,7 +120,7 @@ export function UserModal({
               });
             }
           }}
-          className="rounded-md border border-red-300 p-2 text-red-600 disabled:opacity-40 dark:border-red-900 dark:text-red-400"
+          className="rounded-none border border-red-300 p-2 text-red-600 disabled:opacity-40 dark:border-red-900 dark:text-red-400"
         >
           <TrashIcon className="h-4 w-4" />
         </button>

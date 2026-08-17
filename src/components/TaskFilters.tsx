@@ -92,7 +92,7 @@ export function TaskFilters({
         onClick={toggleDir}
         aria-label={dir === "asc" ? "Ascending" : "Descending"}
         title={dir === "asc" ? "Ascending" : "Descending"}
-        className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+        className="flex h-9 w-9 items-center justify-center rounded-none border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
       >
         <ArrowUpDownIcon className={`h-4 w-4 ${dir === "desc" ? "rotate-180" : ""}`} />
       </button>
@@ -100,7 +100,7 @@ export function TaskFilters({
         href={exportHref}
         aria-label="Export CSV"
         title="Export CSV"
-        className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5]"
+        className="flex h-9 w-9 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583]"
       >
         <DownloadIcon className="h-4 w-4" />
       </a>
@@ -125,7 +125,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 rounded-md border border-slate-300 bg-white px-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+        className="h-9 rounded-none border border-slate-300 bg-white px-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

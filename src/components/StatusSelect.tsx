@@ -27,7 +27,7 @@ export function StatusSelect({
           runWithToast(() => setTaskStatus(taskId, next), "Status updated.");
         });
       }}
-      className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+      className="rounded-none border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
     >
       {STATUSES.map((s) => (
         <option key={s} value={s}>

@@ -66,7 +66,7 @@ export default async function SharedTaskPage({
           <Image src="/logo.png" alt="PIO Bataan - VE PMIS" width={200} height={75} priority />
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-none border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <p className="mb-4 text-xs font-medium uppercase tracking-wide text-slate-400">
             Shared task - read only
           </p>
@@ -90,7 +90,7 @@ export default async function SharedTaskPage({
               {(checks ?? []).map((check) => (
                 <li
                   key={check.id}
-                  className="rounded-lg border border-slate-200 p-3 dark:border-slate-800"
+                  className="rounded-none border border-slate-200 p-3 dark:border-slate-800"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">

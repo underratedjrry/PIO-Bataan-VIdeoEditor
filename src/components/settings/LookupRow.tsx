@@ -53,7 +53,7 @@ export function LookupRow({
                   if (ok) setEditing(false);
                 })
               }
-              className="rounded-md bg-[#1565D8] p-1.5 text-white hover:bg-[#0F52B5] disabled:opacity-60"
+              className="rounded-none bg-[#0036AF] p-1.5 text-white hover:bg-[#002583] disabled:opacity-60"
             >
               <CheckIcon className="h-4 w-4" />
             </button>
@@ -65,7 +65,7 @@ export function LookupRow({
                 setValue(name);
                 setEditing(false);
               }}
-              className="rounded-md border border-slate-300 p-1.5 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+              className="rounded-none border border-slate-300 p-1.5 text-slate-700 dark:border-slate-700 dark:text-slate-300"
             >
               <XIcon className="h-4 w-4" />
             </button>
@@ -90,7 +90,7 @@ export function LookupRow({
               onClick={() => setEditing(true)}
               aria-label="Edit"
               title="Edit"
-              className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+              className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
             >
               <PencilIcon className="h-4 w-4" />
             </button>

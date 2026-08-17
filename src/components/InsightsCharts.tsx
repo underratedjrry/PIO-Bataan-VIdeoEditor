@@ -29,7 +29,7 @@ function StatTile({
   const color = tone ? STATUS_COLORS[tone][scheme] : CHROME[scheme].primaryInk;
 
   return (
-    <div className="rounded-lg border border-slate-200 px-4 py-3 dark:border-slate-800">
+    <div className="rounded-none border border-slate-200 px-4 py-3 dark:border-slate-800">
       <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
       <p className="text-2xl font-semibold" style={{ color }}>
         {value}
@@ -71,12 +71,12 @@ function HorizontalBarChart({
           contentStyle={{
             background: chrome.surface,
             border: `1px solid ${chrome.grid}`,
-            borderRadius: 6,
+            borderRadius: 0,
             fontSize: 12,
             color: chrome.primaryInk,
           }}
         />
-        <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={20}>
+        <Bar dataKey="value" radius={[0, 0, 0, 0]} maxBarSize={20}>
           {rows.map((row, index) => (
             <Cell key={row.key} fill={barColor(row.key, index)} />
           ))}

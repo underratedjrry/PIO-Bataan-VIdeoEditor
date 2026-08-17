@@ -28,7 +28,7 @@ export function AddTaskCheckForm({
         onClick={() => setOpen(true)}
         aria-label="Add check"
         title="Add check"
-        className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+        className="flex h-9 w-9 items-center justify-center rounded-none border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
       >
         <PlusIcon className="h-4 w-4" />
       </button>
@@ -43,7 +43,7 @@ export function AddTaskCheckForm({
           if (ok) setOpen(false);
         });
       }}
-      className="flex flex-col gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800"
+      className="flex flex-col gap-3 rounded-none border border-slate-200 p-4 dark:border-slate-800"
     >
       <label className="flex flex-col gap-1 text-sm">
         <span className="font-medium text-slate-700 dark:text-slate-300">Checked by</span>
@@ -90,7 +90,7 @@ export function AddTaskCheckForm({
           disabled={isPending}
           aria-label="Submit check"
           title={isPending ? "Saving..." : "Submit check"}
-          className="rounded-md bg-[#1565D8] p-2 text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          className="rounded-none bg-[#0036AF] p-2 text-white hover:bg-[#002583] disabled:opacity-60"
         >
           <CheckIcon className="h-4 w-4" />
         </button>
@@ -99,7 +99,7 @@ export function AddTaskCheckForm({
           onClick={() => setOpen(false)}
           aria-label="Cancel"
           title="Cancel"
-          className="rounded-md border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+          className="rounded-none border border-slate-300 p-2 text-slate-700 dark:border-slate-700 dark:text-slate-300"
         >
           <XIcon className="h-4 w-4" />
         </button>

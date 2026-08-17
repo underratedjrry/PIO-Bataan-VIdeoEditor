@@ -33,7 +33,7 @@ export function Modal({
         onClick={close}
         className="absolute inset-0 cursor-default"
       />
-      <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 pr-12 shadow-xl dark:bg-slate-800">
+      <div className="relative w-full max-w-2xl border-2 border-slate-200 bg-white p-6 pr-12 shadow-xl dark:border-slate-700 dark:bg-slate-800">
         <button
           type="button"
           onClick={close}

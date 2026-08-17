@@ -56,7 +56,7 @@ export function ColorSwatchPicker({
             onClick={() => setOpen(false)}
           />
           <div
-            className="fixed z-50 flex flex-wrap gap-1.5 rounded-lg border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+            className="fixed z-50 flex flex-wrap gap-1.5 rounded-none border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800"
             style={{ top: position.top, left: position.left, width: POPOVER_WIDTH }}
           >
             {LOOKUP_COLORS.map((c) => (

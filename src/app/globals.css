@@ -8,8 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-open-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,18 +22,33 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-open-sans), "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 @layer components {
   /* Bolder, official-portal input treatment: a visible 2px border (not a
-     hairline) with a brand-blue focus ring, in the spirit of the reference
-     government portal's boxed form controls - but in our own palette. */
+     hairline), square corners, with a brand-blue focus ring - in the
+     spirit of the reference government portal's boxed form controls, in
+     our own palette. */
   .form-input {
-    @apply rounded-md border-2 border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100;
+    @apply rounded-none border-2 border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100;
   }
   .form-input:focus {
-    @apply border-[#1565D8] ring-2 ring-[#1565D8]/25;
+    @apply border-[#0036AF] ring-2 ring-[#0036AF]/25;
+  }
+
+  /* Shared treatment for primary/secondary action buttons and nav labels:
+     uppercase, letter-spaced, square corners - the reference portal's
+     signature look. Never applied to user-typed input values, only to
+     controls/labels we write ourselves. */
+  .btn-primary {
+    @apply rounded-none bg-[#0036AF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#002583] disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply rounded-none border-2 border-[#0036AF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#0036AF] transition-colors hover:bg-[#0036AF]/10 disabled:opacity-60;
+  }
+  .nav-label {
+    @apply text-xs font-bold uppercase tracking-wide;
   }
 
   /* Four-color strip echoing the logo's pinwheel mark, under the header. */

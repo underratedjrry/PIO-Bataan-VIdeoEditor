@@ -11,9 +11,9 @@ export function EditorCard({ profile, stats }: { profile: Profile; stats: Editor
     stats.totalTasks > 0 ? Math.round((stats.completed / stats.totalTasks) * 100) : 0;
 
   return (
-    <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-800">
+    <div className="rounded-none border border-slate-200 p-4 dark:border-slate-800">
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1565D8]/10 text-sm font-semibold text-[#1565D8]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0036AF]/10 text-sm font-semibold text-[#0036AF]">
           {profile.full_name.slice(0, 1).toUpperCase()}
         </div>
         <div className="min-w-0">

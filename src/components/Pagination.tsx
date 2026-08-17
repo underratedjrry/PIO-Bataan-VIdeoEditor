@@ -40,7 +40,7 @@ export function Pagination({
           onClick={() => goToPage(page - 1)}
           aria-label="Previous page"
           title="Previous"
-          className="rounded-md border border-slate-300 p-1.5 disabled:opacity-40 dark:border-slate-700"
+          className="rounded-none border border-slate-300 p-1.5 disabled:opacity-40 dark:border-slate-700"
         >
           <ChevronLeftIcon className="h-4 w-4" />
         </button>
@@ -53,7 +53,7 @@ export function Pagination({
           onClick={() => goToPage(page + 1)}
           aria-label="Next page"
           title="Next"
-          className="rounded-md border border-slate-300 p-1.5 disabled:opacity-40 dark:border-slate-700"
+          className="rounded-none border border-slate-300 p-1.5 disabled:opacity-40 dark:border-slate-700"
         >
           <ChevronRightIcon className="h-4 w-4" />
         </button>

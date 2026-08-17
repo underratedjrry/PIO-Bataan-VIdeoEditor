@@ -187,7 +187,7 @@ export function TaskForm({
         disabled={isPending}
         aria-label={submitLabel}
         title={isPending ? "Saving..." : submitLabel}
-        className="mt-2 flex h-10 w-10 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5] disabled:opacity-60"
+        className="mt-2 flex h-10 w-10 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583] disabled:opacity-60"
       >
         <CheckIcon className="h-5 w-5" />
       </button>

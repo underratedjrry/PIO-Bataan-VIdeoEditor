@@ -27,7 +27,7 @@ export function RegenerateInsightsButton() {
           }
         });
       }}
-      className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300"
+      className="flex h-9 w-9 items-center justify-center rounded-none border border-slate-300 text-slate-700 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300"
     >
       <RefreshIcon className={`h-4 w-4 ${isPending ? "animate-spin" : ""}`} />
     </button>

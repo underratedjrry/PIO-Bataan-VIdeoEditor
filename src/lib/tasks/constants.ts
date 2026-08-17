@@ -22,19 +22,21 @@ export const STATUS_LABELS: Record<Status, string> = {
   blocked: "Blocked",
 };
 
+// Badge classes pair a light fill with a solid left border accent (the
+// reference portal's "chip" style) rather than a solid pill fill.
 export const PRIORITY_BADGE_CLASSES: Record<Priority, string> = {
-  low: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-  medium: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  high: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
-  urgent: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  low: "bg-slate-100 text-slate-700 border-slate-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-500",
+  medium: "bg-blue-50 text-blue-700 border-blue-500 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-400",
+  high: "bg-amber-50 text-amber-700 border-amber-500 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-400",
+  urgent: "bg-red-50 text-red-700 border-red-600 dark:bg-red-950 dark:text-red-300 dark:border-red-400",
 };
 
 export const STATUS_BADGE_CLASSES: Record<Status, string> = {
-  todo: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-  in_progress: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  in_review: "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
-  done: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
-  blocked: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  todo: "bg-slate-100 text-slate-700 border-slate-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-500",
+  in_progress: "bg-blue-50 text-blue-700 border-blue-500 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-400",
+  in_review: "bg-purple-50 text-purple-700 border-purple-500 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-400",
+  done: "bg-green-50 text-green-700 border-green-600 dark:bg-green-950 dark:text-green-300 dark:border-green-400",
+  blocked: "bg-red-50 text-red-700 border-red-600 dark:bg-red-950 dark:text-red-300 dark:border-red-400",
 };
 
 export const PRIORITIES = Object.keys(PRIORITY_LABELS) as Priority[];
@@ -53,9 +55,9 @@ export const CHECK_STATUS_LABELS: Record<CheckStatus, string> = {
 };
 
 export const CHECK_STATUS_BADGE_CLASSES: Record<CheckStatus, string> = {
-  approved: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
-  disapproved: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
-  for_revision: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
+  approved: "bg-green-50 text-green-700 border-green-600 dark:bg-green-950 dark:text-green-300 dark:border-green-400",
+  disapproved: "bg-red-50 text-red-700 border-red-600 dark:bg-red-950 dark:text-red-300 dark:border-red-400",
+  for_revision: "bg-amber-50 text-amber-700 border-amber-500 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-400",
 };
 
 export const CHECK_STAGES = Object.keys(CHECK_STAGE_LABELS) as CheckStage[];
@@ -66,18 +68,18 @@ export const CHECK_STATUSES = Object.keys(CHECK_STATUS_LABELS) as CheckStatus[];
 // badge wherever a task displays it - not tied to a fixed enum, since both
 // are editable lookup tables.
 export const LOOKUP_BADGE_CLASSES: Record<string, string> = {
-  slate: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-  red: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
-  orange: "bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300",
-  amber: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
-  green: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
-  teal: "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300",
-  cyan: "bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300",
-  blue: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  indigo: "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300",
-  purple: "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
-  pink: "bg-pink-50 text-pink-700 dark:bg-pink-950 dark:text-pink-300",
-  rose: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300",
+  slate: "bg-slate-100 text-slate-700 border-slate-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-500",
+  red: "bg-red-50 text-red-700 border-red-600 dark:bg-red-950 dark:text-red-300 dark:border-red-400",
+  orange: "bg-orange-50 text-orange-700 border-orange-500 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-400",
+  amber: "bg-amber-50 text-amber-700 border-amber-500 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-400",
+  green: "bg-green-50 text-green-700 border-green-600 dark:bg-green-950 dark:text-green-300 dark:border-green-400",
+  teal: "bg-teal-50 text-teal-700 border-teal-500 dark:bg-teal-950 dark:text-teal-300 dark:border-teal-400",
+  cyan: "bg-cyan-50 text-cyan-700 border-cyan-500 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-400",
+  blue: "bg-blue-50 text-blue-700 border-blue-500 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-400",
+  indigo: "bg-indigo-50 text-indigo-700 border-indigo-500 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-400",
+  purple: "bg-purple-50 text-purple-700 border-purple-500 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-400",
+  pink: "bg-pink-50 text-pink-700 border-pink-500 dark:bg-pink-950 dark:text-pink-300 dark:border-pink-400",
+  rose: "bg-rose-50 text-rose-700 border-rose-500 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-400",
 };
 
 // Solid dot color for the picker UI itself (distinct from the light-fill

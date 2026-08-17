@@ -81,7 +81,7 @@ export function DashboardShell({
                 type="submit"
                 aria-label="Sign out"
                 title="Sign out"
-                className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+                className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
               >
                 <LogOutIcon className="h-4 w-4" />
               </button>
@@ -93,7 +93,7 @@ export function DashboardShell({
           <div className="mb-4 hidden justify-end md:flex">
             <ClockAndWeather />
           </div>
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
+          <div className="border-2 border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
             {children}
           </div>
         </main>

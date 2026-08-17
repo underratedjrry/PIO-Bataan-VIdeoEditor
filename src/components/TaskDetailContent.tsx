@@ -87,7 +87,7 @@ export async function TaskDetailContent({ id, mode }: { id: string; mode?: strin
               href={`/tasks/${task.id}?mode=edit`}
               aria-label="Edit task"
               title="Edit"
-              className="text-slate-500 hover:text-[#1565D8] dark:text-slate-400"
+              className="text-slate-500 hover:text-[#0036AF] dark:text-slate-400"
             >
               <PencilIcon className="h-4 w-4" />
             </Link>
@@ -125,7 +125,7 @@ export async function TaskDetailContent({ id, mode }: { id: string; mode?: strin
           {(checks ?? []).map((check) => (
             <li
               key={check.id}
-              className="rounded-lg border border-slate-200 p-3 dark:border-slate-800"
+              className="rounded-none border border-slate-200 p-3 dark:border-slate-800"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -236,7 +236,7 @@ export function ReadOnlyTaskDetails({
             href={task.output_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1565D8] underline"
+            className="text-[#0036AF] underline"
           >
             {task.output_link}
           </a>

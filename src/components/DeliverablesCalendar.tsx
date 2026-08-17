@@ -77,7 +77,7 @@ export function DeliverablesCalendar({
           href={`/dashboard?month=${monthParam(prevMonth.getFullYear(), prevMonth.getMonth())}`}
           aria-label="Previous month"
           title="Previous month"
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+          className="flex h-9 w-9 items-center justify-center rounded-none border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
         >
           <ChevronLeftIcon className="h-4 w-4" />
         </Link>
@@ -86,7 +86,7 @@ export function DeliverablesCalendar({
             {MONTH_NAMES[month]} {year}
           </span>
           {!isCurrentMonth && (
-            <Link href="/dashboard" className="text-xs font-medium text-[#1565D8] underline">
+            <Link href="/dashboard" className="text-xs font-medium text-[#0036AF] underline">
               Today
             </Link>
           )}
@@ -95,14 +95,14 @@ export function DeliverablesCalendar({
           href={`/dashboard?month=${monthParam(nextMonth.getFullYear(), nextMonth.getMonth())}`}
           aria-label="Next month"
           title="Next month"
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+          className="flex h-9 w-9 items-center justify-center rounded-none border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
         >
           <ChevronRightIcon className="h-4 w-4" />
         </Link>
       </div>
 
       <div className="overflow-x-auto">
-        <div className="grid min-w-[700px] grid-cols-7 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 dark:border-slate-800 dark:bg-slate-800">
+        <div className="grid min-w-[700px] grid-cols-7 gap-px overflow-hidden rounded-none border border-slate-200 bg-slate-200 dark:border-slate-800 dark:bg-slate-800">
           {WEEKDAYS.map((d) => (
             <div
               key={d}
@@ -132,7 +132,7 @@ export function DeliverablesCalendar({
                 <span
                   className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
                     isToday
-                      ? "bg-[#1565D8] text-white"
+                      ? "bg-[#0036AF] text-white"
                       : "text-slate-700 dark:text-slate-300"
                   }`}
                 >
@@ -173,7 +173,7 @@ export function DeliverablesCalendar({
                 <Link
                   href={`/tasks/${t.id}`}
                   onClick={() => setSelectedDay(null)}
-                  className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 hover:border-[#1565D8] dark:border-slate-800"
+                  className="flex flex-col gap-2 rounded-none border border-slate-200 p-3 hover:border-[#0036AF] dark:border-slate-800"
                 >
                   <span className="font-medium text-slate-900 dark:text-slate-100">
                     {t.title}

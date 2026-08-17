@@ -60,7 +60,7 @@ export function SettingsTabs({
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 text-sm font-medium ${
               tab === t.key
-                ? "border-b-2 border-[#1565D8] text-[#1565D8]"
+                ? "border-b-2 border-[#0036AF] text-[#0036AF]"
                 : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
             }`}
           >
@@ -72,7 +72,7 @@ export function SettingsTabs({
       {tab === "users" && (
         <div className="flex flex-col gap-4">
           <AddUserForm />
-          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+          <div className="overflow-x-auto rounded-none border border-slate-200 dark:border-slate-800">
             <table className="w-full min-w-[560px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
                 <tr>
@@ -184,13 +184,13 @@ function LookupSection({
           disabled={isPending}
           aria-label={`Add ${itemLabel}`}
           title="Add"
-          className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1565D8] text-white hover:bg-[#0F52B5] disabled:opacity-60"
+          className="flex h-9 w-9 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583] disabled:opacity-60"
         >
           <PlusIcon className="h-4 w-4" />
         </button>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-none border border-slate-200 dark:border-slate-800">
         <table className="w-full min-w-[480px] text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
             <tr>
