@@ -4,7 +4,7 @@ Project management for video editing tasks: create/track tasks by segment,
 output type, priority, and due date; email notifications; CSV export;
 data-driven performance insights; editorial approval workflow (Checked By);
 a per-editor performance dashboard; a calendar Dashboard of deliverables by
-due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
+due date; a per-user Weather Dashboard; and Admin/Editor/Viewer roles.
 
 ## Stack
 
@@ -12,7 +12,7 @@ due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
 - Supabase (Postgres, Auth, Row-Level Security)
 - Resend (email notifications)
 - Vercel Cron (daily due/overdue digest)
-- Anthropic Claude API (AI Assist chat page only - optional)
+- Open-Meteo (weather data + geocoding, no API key required)
 
 ## 1. Create the Supabase project
 
@@ -21,7 +21,8 @@ due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
    `0001_init.sql`, `0002_editorial_workflow.sql`, `0003_user_management.sql`,
    `0004_output_link.sql`, `0005_checked_by_writer.sql`,
    `0006_task_timing.sql`, `0007_segments_lookup.sql`, `0008_lookup_colors.sql`,
-   then `0009_sheet_sync_tracking.sql` (all under `supabase/migrations/`). Together
+   `0009_sheet_sync_tracking.sql`, then `0010_weather_location.sql` (all under
+   `supabase/migrations/`). Together
    these create all tables, RLS policies,
    seed data (default Output Types and Segments), and a trigger that
    auto-provisions a `profiles` row on signup - **the first user to sign up
@@ -42,12 +43,6 @@ due date; an AI Assist chat page; and Admin/Editor/Viewer roles.
    if you'd rather provision it from the Vercel dashboard.
 4. Email is optional - if you skip `RESEND_API_KEY`, the app still works,
    it just logs a warning instead of sending.
-
-## 3. (Optional) Get an Anthropic API key
-
-Only needed for the **AI Assist** chat page. Create a key at
-[console.anthropic.com](https://console.anthropic.com). Without it, the page
-still loads but replies with a message saying the feature is unavailable.
 
 ## 3b. (Optional) Set up Google Sheets sync
 
@@ -156,11 +151,18 @@ to Done) - both tracked separately from `created_at`/`updated_at` so the
 number reflects actual editing time, not time since the record was made or
 last touched.
 
-## AI Assist (`/ai-assist`)
+## Weather Dashboard (`/weather`)
 
-A simple chat page backed by the Claude API (see step 3 above) for drafting
-task descriptions, captions, summaries, etc. Conversation history is
-in-memory only (not persisted) - refreshing the page starts a new chat.
+Current conditions + 5-day forecast for the signed-in user's own location
+(defaults to Balanga City, Bataan; each user can search and set their own via
+Open-Meteo's free geocoding API, stored on their profile). Also embeds Windy
+(rain radar) and Zoom Earth (satellite) for that same location, each with an
+"Open full view" link as a fallback if the embed ever gets blocked.
+
+**PAGASA has no public data API** - there's nothing to integrate with
+programmatically, so live figures come from Open-Meteo (a comparable open
+weather model) instead. If PAGASA ever publishes one, swap the fetch in
+`src/lib/weather.ts`.
 
 ## Notes
 
@@ -198,7 +200,7 @@ in-memory only (not persisted) - refreshing the page starts a new chat.
   "anyone with the link" share URL). Anyone with the link can view it, so
   only share task links with people who should see that task's details.
 - **Dashboard** (`/dashboard`) opens with a row of quick-action tiles (New
-  Task, Tasks, Video Editors, Insights, AI Assist, and Settings for admins),
+  Task, Tasks, Video Editors, Insights, Weather, and Settings for admins),
   then a month calendar of all tasks by due date below (a booking-calendar
   style view, not scoped to the signed-in user). Clicking a date with tasks
   opens a modal listing them, each linking into the normal task view.

@@ -2,9 +2,9 @@ import Link from "next/link";
 import {
   ChartBarIcon,
   ClipboardListIcon,
+  CloudIcon,
   GearIcon,
   PlusIcon,
-  SparkleIcon,
   UsersIcon,
 } from "@/components/icons";
 import type { Role } from "@/types/database";
@@ -39,10 +39,10 @@ const ACTIONS = [
     adminOnly: false,
   },
   {
-    href: "/ai-assist",
-    label: "AI Assist",
-    sublabel: "Draft with Claude",
-    icon: SparkleIcon,
+    href: "/weather",
+    label: "Weather",
+    sublabel: "Live conditions & forecast",
+    icon: CloudIcon,
     adminOnly: false,
   },
   {

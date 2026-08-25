@@ -22,7 +22,7 @@ export default async function DashboardLayout({
     { href: "/insights", label: "Insights" },
     { href: "/tasks", label: "Tasks" },
     { href: "/editors", label: "Video Editors" },
-    { href: "/ai-assist", label: "AI Assist" },
+    { href: "/weather", label: "Weather" },
     {
       href: "https://docs.google.com/spreadsheets/d/1x8Nl6RkVMr2YJPL3G0O_4IUrfn8hYJYbZoDNZhLguD4/edit?usp=sharing",
       label: "PIO Accomplishments 2026",

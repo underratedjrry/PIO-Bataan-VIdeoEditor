@@ -20,6 +20,9 @@ export type Profile = {
   full_name: string;
   email: string;
   role: Role;
+  weather_location_name: string | null;
+  weather_location_lat: number | null;
+  weather_location_lng: number | null;
   created_at: string;
 };
 
