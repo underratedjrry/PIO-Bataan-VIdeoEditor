@@ -81,7 +81,7 @@ export function TaskForm({
         <textarea {...register("description")} rows={4} className="form-input" />
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Segment" error={errors.segment_id?.message}>
           <select {...register("segment_id")} className="form-input">
             <option value="">None</option>
