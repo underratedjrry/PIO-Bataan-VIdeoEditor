@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { getOrCreateShortLink } from "@/lib/short-link-actions";
 import { CheckIcon, LinkIcon } from "@/components/icons";
 
 const POPOVER_WIDTH = 320;
@@ -15,11 +16,11 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+  const [loading, setLoading] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const shareUrl = open ? `${window.location.origin}/share/tasks/${taskId}` : "";
-
-  function openPopover() {
+  async function openPopover() {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (rect) {
       setPosition({
@@ -29,6 +30,20 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
     }
     setCopied(false);
     setOpen(true);
+
+    if (!shareUrl) {
+      setLoading(true);
+      try {
+        const fullUrl = `${window.location.origin}/share/tasks/${taskId}`;
+        const code = await getOrCreateShortLink(taskId, fullUrl);
+        setShareUrl(`${window.location.origin}/s/${code}`);
+      } catch {
+        toast.error("Couldn't create a short link - try again.");
+        setOpen(false);
+      } finally {
+        setLoading(false);
+      }
+    }
   }
 
   async function copyLink() {
@@ -73,16 +88,17 @@ export function ShareTaskButton({ taskId }: { taskId: string }) {
             <div className="flex gap-2">
               <input
                 readOnly
-                value={shareUrl}
+                value={loading ? "Generating link..." : shareUrl}
                 onFocus={(event) => event.currentTarget.select()}
                 className="form-input min-w-0 flex-1"
               />
               <button
                 type="button"
                 onClick={copyLink}
+                disabled={loading || !shareUrl}
                 aria-label="Copy link"
                 title="Copy link"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583]"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-[#0036AF] text-white hover:bg-[#002583] disabled:opacity-50"
               >
                 {copied ? <CheckIcon className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
               </button>

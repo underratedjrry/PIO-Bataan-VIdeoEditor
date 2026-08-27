@@ -2,15 +2,23 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 const AUTH_ROUTES = ["/login", "/signup"];
-// Publicly viewable without a session - e.g. task share links, which gate
-// access via the task's own unguessable UUID instead of auth.
+// Publicly viewable without a session - e.g. task share links and their
+// short-link redirects, which gate access via an unguessable id/code
+// instead of auth. "/s" is checked as a full segment (not a bare prefix)
+// so it can't accidentally match /settings or /signup.
 const PUBLIC_ROUTES = ["/share"];
+
+function isPublicRoute(pathname: string) {
+  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route)) ||
+    pathname === "/s" ||
+    pathname.startsWith("/s/");
+}
 
 // Next.js 16 renamed middleware.ts -> proxy.ts (export `proxy` instead of
 // `middleware`); it now runs on the Node.js runtime only.
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
+  if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
 

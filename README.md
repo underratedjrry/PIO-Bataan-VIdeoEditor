@@ -21,8 +21,8 @@ due date; a per-user Weather Dashboard; and Admin/Editor/Viewer roles.
    `0001_init.sql`, `0002_editorial_workflow.sql`, `0003_user_management.sql`,
    `0004_output_link.sql`, `0005_checked_by_writer.sql`,
    `0006_task_timing.sql`, `0007_segments_lookup.sql`, `0008_lookup_colors.sql`,
-   `0009_sheet_sync_tracking.sql`, then `0010_weather_location.sql` (all under
-   `supabase/migrations/`). Together
+   `0009_sheet_sync_tracking.sql`, `0010_weather_location.sql`, then
+   `0011_short_links.sql` (all under `supabase/migrations/`). Together
    these create all tables, RLS policies,
    seed data (default Output Types and Segments), and a trigger that
    auto-provisions a `profiles` row on signup - **the first user to sign up
@@ -155,9 +155,13 @@ last touched.
 
 Current conditions + 5-day forecast for the signed-in user's own location
 (defaults to Balanga City, Bataan; each user can search and set their own via
-Open-Meteo's free geocoding API, stored on their profile). Also embeds Windy
-(rain radar) and Zoom Earth (satellite) for that same location, each with an
-"Open full view" link as a fallback if the embed ever gets blocked.
+Open-Meteo's free geocoding API, stored on their profile). Both are
+interactive cards, not static text: click **Right now** to toggle &deg;C/&deg;F,
+click a forecast day to expand rain total / max wind / UV index / sunrise /
+sunset. Also embeds Windy (rain radar) and PAGASA's own weather page for that
+same location, each with an "Open full view" link as a fallback if the embed
+ever gets blocked (PAGASA's site may send headers that refuse iframe
+embedding entirely - that's on their end, not fixable from here).
 
 **PAGASA has no public data API** - there's nothing to integrate with
 programmatically, so live figures come from Open-Meteo (a comparable open
@@ -199,6 +203,10 @@ weather model) instead. If PAGASA ever publishes one, swap the fetch in
   by the task's own unguessable UUID (the same trust model as any
   "anyone with the link" share URL). Anyone with the link can view it, so
   only share task links with people who should see that task's details.
+  The copyable link is a short `/s/[code]` redirect (`short_links` table +
+  a public redirect route) rather than the full `/share/tasks/[id]` URL - a
+  self-hosted shortener, not a third-party API, reused on repeat Share
+  clicks for the same task instead of minting a new code every time.
 - **Dashboard** (`/dashboard`) opens with a row of quick-action tiles (New
   Task, Tasks, Video Editors, Insights, Weather, and Settings for admins),
   then a month calendar of all tasks by due date below (a booking-calendar

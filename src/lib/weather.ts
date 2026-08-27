@@ -24,6 +24,11 @@ export type DailyForecast = {
   tempMaxC: number;
   tempMinC: number;
   precipitationChance: number;
+  precipitationSumMm: number;
+  windMaxKph: number;
+  uvIndexMax: number;
+  sunrise: string;
+  sunset: string;
 };
 
 export type WeatherData = {
@@ -77,7 +82,10 @@ export async function fetchWeather(location: WeatherLocation): Promise<WeatherDa
   url.searchParams.set("latitude", String(location.lat));
   url.searchParams.set("longitude", String(location.lng));
   url.searchParams.set("current", "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day");
-  url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max");
+  url.searchParams.set(
+    "daily",
+    "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,uv_index_max,sunrise,sunset",
+  );
   url.searchParams.set("timezone", "Asia/Manila");
   url.searchParams.set("forecast_days", "5");
 
@@ -102,6 +110,11 @@ export async function fetchWeather(location: WeatherLocation): Promise<WeatherDa
         tempMaxC: data.daily.temperature_2m_max[i],
         tempMinC: data.daily.temperature_2m_min[i],
         precipitationChance: data.daily.precipitation_probability_max[i],
+        precipitationSumMm: data.daily.precipitation_sum[i],
+        windMaxKph: data.daily.wind_speed_10m_max[i],
+        uvIndexMax: data.daily.uv_index_max[i],
+        sunrise: data.daily.sunrise[i],
+        sunset: data.daily.sunset[i],
       })),
     };
   } catch {

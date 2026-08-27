@@ -101,6 +101,15 @@ export type InsightsCache = {
   narrative: string;
 };
 
+export type ShortLink = {
+  id: string;
+  code: string;
+  target_url: string;
+  task_id: string | null;
+  created_by: string | null;
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -168,6 +177,12 @@ export type Database = {
           status: CheckStatus;
         };
         Update: Partial<TaskCheck>;
+        Relationships: [];
+      };
+      short_links: {
+        Row: ShortLink;
+        Insert: Partial<ShortLink> & { code: string; target_url: string };
+        Update: Partial<ShortLink>;
         Relationships: [];
       };
     };
