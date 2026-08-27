@@ -158,10 +158,11 @@ Current conditions + 5-day forecast for the signed-in user's own location
 Open-Meteo's free geocoding API, stored on their profile). Both are
 interactive cards, not static text: click **Right now** to toggle &deg;C/&deg;F,
 click a forecast day to expand rain total / max wind / UV index / sunrise /
-sunset. Also embeds Windy (rain radar) and PAGASA's own weather page for that
-same location, each with an "Open full view" link as a fallback if the embed
-ever gets blocked (PAGASA's site may send headers that refuse iframe
-embedding entirely - that's on their end, not fixable from here).
+sunset. Also embeds Windy (rain radar) and PANaHON - PAGASA's own
+satellite/radar system at panahon.gov.ph (not pagasa.dost.gov.ph itself,
+which sends `X-Frame-Options: SAMEORIGIN` and refuses to render in any
+iframe) - for that same location, each with an "Open full view" link as a
+fallback if an embed ever gets blocked.
 
 **PAGASA has no public data API** - there's nothing to integrate with
 programmatically, so live figures come from Open-Meteo (a comparable open
@@ -174,6 +175,9 @@ weather model) instead. If PAGASA ever publishes one, swap the fetch in
   (`?priority=&segmentId=&status=&outputTypeId=&sort=&dir=&page=&pageSize=`),
   so a given view is shareable/bookmarkable; CSV export re-applies the same
   filters as whatever's on screen (across all pages, not just the current one).
+  **Default sort is most-recently-created task first** (`created_at` desc) -
+  picking a different field from the Sort by dropdown without also setting a
+  direction falls back to that field's own ascending default instead.
 - **Segments** (like Output Types and Writers) are an admin-editable lookup
   managed from Settings, not a fixed list - add/rename/deactivate/delete from
   the Settings > Segments tab. Segments and Output Types can each be assigned

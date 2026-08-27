@@ -33,14 +33,24 @@ export function parseTaskFilters(searchParams: SearchParamsRecord): TaskFilters 
   const pageRaw = Number(get("page"));
   const page = Number.isInteger(pageRaw) && pageRaw >= 1 ? pageRaw : 1;
 
+  // Default view is most-recently-created task first. If the user picks a
+  // different sort field from the dropdown but doesn't also set a
+  // direction, that field's own natural default (ascending) applies -
+  // only the untouched default ("created_at" with no explicit dir) is
+  // descending.
+  const sortRaw = get("sort");
+  const dirRaw = get("dir");
+  const sort = sortRaw || "created_at";
+  const dir = dirRaw === "desc" ? "desc" : dirRaw === "asc" ? "asc" : sortRaw ? "asc" : "desc";
+
   return {
     priority: get("priority") || undefined,
     segmentId: get("segmentId") || undefined,
     status: get("status") || undefined,
     assignedTo: get("assignedTo") || undefined,
     outputTypeId: get("outputTypeId") || undefined,
-    sort: get("sort") || "due_date",
-    dir: get("dir") === "desc" ? "desc" : "asc",
+    sort,
+    dir,
     page,
     pageSize,
   };

@@ -32,14 +32,21 @@ export function TaskFilters({
     router.push(`${pathname}?${params.toString()}`);
   }
 
-  function toggleDir() {
+  function toggleDir(currentDir: "asc" | "desc") {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("dir", params.get("dir") === "desc" ? "asc" : "desc");
+    params.set("dir", currentDir === "desc" ? "asc" : "desc");
     params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
   }
 
-  const dir = searchParams.get("dir") === "desc" ? "desc" : "asc";
+  // Mirrors parseTaskFilters' default: untouched (no sort, no dir) means
+  // most-recently-created first; picking a different sort field without
+  // also setting a direction falls back to that field's own ascending
+  // default.
+  const sortParam = searchParams.get("sort");
+  const dirParam = searchParams.get("dir");
+  const dir =
+    dirParam === "desc" ? "desc" : dirParam === "asc" ? "asc" : sortParam ? "asc" : "desc";
   const pageSize = searchParams.get("pageSize") ?? "25";
   const exportHref = `/api/tasks/export?${searchParams.toString()}`;
 
@@ -77,7 +84,7 @@ export function TaskFilters({
       />
       <FilterSelect
         label="Sort by"
-        value={searchParams.get("sort") ?? "due_date"}
+        value={sortParam ?? "created_at"}
         onChange={(v) => update("sort", v)}
         options={SORT_OPTIONS}
       />
@@ -89,7 +96,7 @@ export function TaskFilters({
       />
       <button
         type="button"
-        onClick={toggleDir}
+        onClick={() => toggleDir(dir)}
         aria-label={dir === "asc" ? "Ascending" : "Descending"}
         title={dir === "asc" ? "Ascending" : "Descending"}
         className="flex h-9 w-9 items-center justify-center rounded-none border border-slate-300 text-slate-700 dark:border-slate-700 dark:text-slate-300"
